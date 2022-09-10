@@ -14,7 +14,7 @@ import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 function LoginPage() {
 	const [username, setUsername] = useState("")
@@ -23,21 +23,25 @@ function LoginPage() {
 	const [dialogTitle, setDialogTitle] = useState("")
 	const [dialogMsg, setDialogMsg] = useState("")
 	const [isLoginSuccess, setIsLoginSuccess] = useState(false)
+	const [userToken, setUserToken] = useState({});
+
+	//TODO: store jwt as cookie, integrate login APIs
 
 	const handleLogin = async () => {
-		setIsLoginSuccess(false)
-		const res = await axios.post(URL_USER_SVC, { username, password })
-			.catch((err) => {
-				if (err.response.status === STATUS_CODE_CONFLICT) {
-					setErrorDialog('This username already exists')
-				} else {
-					setErrorDialog('Please try again later')
-				}
-			})
-		if (res && res.status === STATUS_CODE_CREATED) {
-			setSuccessDialog('Account successfully created')
-			setIsLoginSuccess(true)
-		}
+		setUserToken({ token: "a" })
+		// setIsLoginSuccess(false)
+		// const res = await axios.post(URL_USER_SVC, { username, password })
+		// 	.catch((err) => {
+		// 		if (err.response.status === STATUS_CODE_CONFLICT) {
+		// 			setErrorDialog('This username already exists')
+		// 		} else {
+		// 			setErrorDialog('Please try again later')
+		// 		}
+		// 	})
+		// if (res && res.status === STATUS_CODE_CREATED) {
+		// 	setSuccessDialog('Account successfully created')
+		// 	setIsLoginSuccess(true)
+		// }
 	}
 
 	const closeDialog = () => setIsDialogOpen(false)
@@ -53,9 +57,11 @@ function LoginPage() {
 		setDialogTitle('Error')
 		setDialogMsg(msg)
 	}
+	console.log(Object.keys(userToken))
 
 	return (
 		<Box display={"flex"} flexDirection={"row"} height="100vh">
+			{userToken && Object.keys(userToken).length !== 0 && (<Navigate to="/home" replace={true} />)}
 			<Box display={"flex"} flex={1} flexDirection="column" justifyContent="center">
 				<Box display={"flex"} flexDirection="column" padding="25%">
 					<Typography variant={"h4"} marginBottom={"1rem"} fontWeight="bold">Welcome Back</Typography>

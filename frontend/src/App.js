@@ -1,7 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import SignupPage from './components/SignupPage';
 import LoginPage from './components/LoginPage';
+import MatchRoomPage from './components/MatchRoomPage';
 import { Box, createTheme, ThemeProvider } from "@mui/material";
+import HomePage from "./components/HomePage";
+import socketIO from "socket.io-client"
 
 const theme = createTheme({
     typography: {
@@ -17,6 +20,8 @@ const theme = createTheme({
     },
 });
 
+const socket = socketIO.connect("http://localhost:3000")
+
 function App() {
     return (
         <ThemeProvider theme={theme}>
@@ -27,6 +32,8 @@ function App() {
                             <Route exact path="/" element={<Navigate replace to="/login" />}></Route>
                             <Route path="/login" element={<LoginPage />} />
                             <Route path="/signup" element={<SignupPage />} />
+                            <Route path="/home" element={<HomePage socket={socket} />} />
+                            <Route path="/room" element={<MatchRoomPage socket={socket} />} />
                         </Routes>
                     </Router>
                 </Box>
