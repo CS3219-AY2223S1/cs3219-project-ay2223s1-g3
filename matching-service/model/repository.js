@@ -1,4 +1,4 @@
-import MatchModel from './matching-model';
+import MatchModel from './matching-model.js';
 import 'dotenv/config';
 import mongoose from 'mongoose';
 
@@ -23,4 +23,9 @@ db.once("open", () => console.log("Connected to Database"));
 // ?? why tf is this even async (copied from UserModel.js)
 export async function createMatch(params) {
     return new MatchModel(params);
+}
+
+export function passDatabase() {
+  const collection = db.collection('MatchModel');
+  return collection;
 }

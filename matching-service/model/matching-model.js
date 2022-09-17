@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
 let Schema = mongoose.Schema;
 let MatchingModelSchema = new Schema({
-    socketId: {
+    socketID: {
         type: String,
-        unique: true,
+        //unique: true,
         required: true,
     },
-    roomId: {
+    roomID: {
         type: String,
         required: true,
     },
@@ -18,6 +18,10 @@ let MatchingModelSchema = new Schema({
         type: Date,
         required: true,
         default: Date.now
+    },
+    matched: {
+        type: Boolean,
+        required: true,
     }
 })
 

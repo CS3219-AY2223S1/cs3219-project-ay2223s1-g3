@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import { createListeners } from "./controller/matchingController.js";
 
 const app = express();
 const corsOptions = {
@@ -26,4 +27,5 @@ httpServer.listen(8001, () => {
 
 io.on("connection", (socket) => {
   console.log("a user connected: " + socket.id);
+  createListeners(socket, io);
 });
