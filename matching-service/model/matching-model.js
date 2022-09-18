@@ -10,6 +10,10 @@ let MatchingModelSchema = new Schema({
         type: String,
         required: true,
     },
+    chatRoomID: {
+        type: String,
+        required: true
+    },
     difficulty: {
         type: String,
         required: true

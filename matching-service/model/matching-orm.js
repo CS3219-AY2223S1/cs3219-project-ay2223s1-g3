@@ -1,12 +1,13 @@
 import { createMatch } from "./repository.js";
 import MatchModel from "./matching-model.js";
 
-export async function ormCreateMatch(socketID, roomID, difficulty, matched) {
+export async function ormCreateMatch(socketID, roomID, chatRoomID, difficulty, matched) {
   try {
     console.log("socketID", socketID);
     const newMatch = await createMatch({
       socketID,
       roomID,
+      chatRoomID,
       difficulty,
       matched,
     });
@@ -46,7 +47,7 @@ export async function findMatch(difficulty) {
     if (document === undefined || document === null) {
       return undefined;
     }
-    return document.roomID;
+    return document;
   } catch (err) {
     console.log("ERROR: Could not update new match");
     return { err };
@@ -66,10 +67,10 @@ export async function deleteRoom(roomID) {
   }
 }
 
-export async function findRoomName(socketID) {
+export async function findMatchDoc(socketID) {
   try {
     const doc = await MatchModel.findOne({ socketID : socketID });
-    return doc.roomID;
+    return doc;
   } catch (err) {
     console.log("ERROR: Could not find roomName");
     return { err };
