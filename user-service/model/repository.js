@@ -20,3 +20,8 @@ export async function usernameInDb(username) {
   return exists
 }
 
+export async function getUser(username) {
+  const user = await UserModel.findOne({username: username})
+  return user
+}
+
