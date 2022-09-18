@@ -1,5 +1,5 @@
 import { ormCreateUser as _createUser } from '../model/user-orm.js'
-import { ormGetUser as _getUser } from '../model/user-orm.js'
+import { ormLogInUser as _logInUser } from '../model/user-orm.js'
 import jwt from 'jsonwebtoken'
 import 'dotenv/config'
 
@@ -32,7 +32,7 @@ export async function loginUser(req, res) {
     try {
         const { username, password } = req.body
         if (username && password) {
-            const resp = await _getUser(username, password)
+            const resp = await _logInUser(username, password)
             if (resp.err) {
                 console.log(`Unable to retrieve user: ${username}`)
                 return res.status(400).json({message: `Unable to retrieve user: ${username}`})
@@ -41,9 +41,7 @@ export async function loginUser(req, res) {
                 console.log('Incorrect username or password. Please try again!')
                 return res.status(400).json({message: 'Incorrect username or password. Please try again!'})
             }
-            const token = jwt.sign({id: resp.username}, process.env.JWT_KEY, {expiresIn: 86400})
-            req.session.token = token
-            return res.status(201).json({message: 'Login successful!'})
+            return res.status(201).json({message: 'Login successful!', userJWT: resp.jwt})
         }
     } catch (err) {
         console.log(err)

@@ -9,6 +9,9 @@ let UserModelSchema = new Schema({
     password: {
         type: String,
         required: true,
+    },
+    jwt: {
+        type: String,
     }
 })
 

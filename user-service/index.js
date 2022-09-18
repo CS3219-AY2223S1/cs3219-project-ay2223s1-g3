@@ -12,13 +12,13 @@ import { createUser, loginUser } from './controller/user-controller.js';
 import cookieSession from 'cookie-session';
 
 // cookie
-app.use(
-    cookieSession({
-        name: "cs3219-project-session",
-        secret: process.env.COOKIE_SECRET,
-        httpOnly: true
-    })
-)
+// app.use(
+//     cookieSession({
+//         name: "cs3219-project-session",
+//         secret: process.env.COOKIE_SECRET,
+//         httpOnly: true
+//     })
+// )
 
 const router = express.Router()
 
