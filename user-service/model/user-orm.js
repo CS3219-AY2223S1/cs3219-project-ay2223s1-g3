@@ -20,7 +20,7 @@ export async function ormCreateUser(username, originalPassword) {
     }
 }
 
-export async function ormLogInUser(username, password) {
+export async function ormLoginUser(username, password) {
     try {
         const exists = await usernameInDb(username)
         if (!exists) {
@@ -32,9 +32,26 @@ export async function ormLogInUser(username, password) {
             return null
         }
         const token = jwt.sign({id: username}, process.env.JWT_KEY, {expiresIn: 86400})
-        console.log(token)
         user.jwt = token
+        user.save()
         return user
+    } catch (err) {
+        console.log(`ERROR: Could not retrieve user: ${username}`)
+        return { err }
+    }
+}
+
+export async function ormLogoutUser(username) {
+    try {
+        const exists = await usernameInDb(username)
+        if (!exists) {
+            return null
+        }
+        const user = await getUser(username)
+        const token = user.jwt
+        user.jwt = null
+        user.save()
+        return token
     } catch (err) {
         console.log(`ERROR: Could not retrieve user: ${username}`)
         return { err }

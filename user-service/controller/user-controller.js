@@ -1,14 +1,12 @@
 import { ormCreateUser as _createUser } from '../model/user-orm.js'
-import { ormLogInUser as _logInUser } from '../model/user-orm.js'
-import jwt from 'jsonwebtoken'
-import 'dotenv/config'
+import { ormLoginUser as _loginUser } from '../model/user-orm.js'
+import { ormLogoutUser as _logoutUser } from '../model/user-orm.js'
 
 export async function createUser(req, res) {
     try {
         const { username, password } = req.body;
         if (username && password) {
             const resp = await _createUser(username, password);
-            console.log(resp);
             if (resp.err) {
                 return res.status(400).json({message: 'Could not create a new user!'});
             } else {
@@ -32,7 +30,7 @@ export async function loginUser(req, res) {
     try {
         const { username, password } = req.body
         if (username && password) {
-            const resp = await _logInUser(username, password)
+            const resp = await _loginUser(username, password)
             if (resp.err) {
                 console.log(`Unable to retrieve user: ${username}`)
                 return res.status(400).json({message: `Unable to retrieve user: ${username}`})
@@ -46,5 +44,28 @@ export async function loginUser(req, res) {
     } catch (err) {
         console.log(err)
         return res.status(500).json({message: 'Authentication failure when logging in!'})
+    }
+}
+
+export async function logoutUser(req, res) {
+    try {
+        const { username } = req.body
+        if (username) {
+            const resp = await _logoutUser(username)
+            if (resp.err) {
+                console.log(`Unable to retrieve user: ${username}`)
+                return res.status(400).json({message: `Unable to retrieve user: ${username}`})
+            }
+            if (!resp) {
+                console.log('User does not exist!')
+                return res.status(400).json({message: 'User does not exist!'})
+            }
+            // middleware authentication blacklist logic here
+            const token = resp
+            return res.status(201).json({message: 'Logout successful!'})
+        }
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({message: 'Error occurred when logging out!'})
     }
 }
