@@ -25,3 +25,8 @@ export async function getUser(username) {
   return user
 }
 
+export async function deleteUser(username) {
+  const success = await UserModel.deleteOne({username: username})
+  return success
+}
+

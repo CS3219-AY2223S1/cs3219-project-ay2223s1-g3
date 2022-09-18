@@ -1,4 +1,4 @@
-import { createUser, usernameInDb, getUser } from './repository.js';
+import { createUser, usernameInDb, getUser, deleteUser } from './repository.js';
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import 'dotenv/config'
@@ -54,6 +54,29 @@ export async function ormLogoutUser(username) {
         return token
     } catch (err) {
         console.log(`ERROR: Could not retrieve user: ${username}`)
+        return { err }
+    }
+}
+
+export async function ormDeleteUser(username, password) {
+    try {
+        const exists = await usernameInDb(username)
+        if (!exists) {
+            return null
+        }
+        const user = await getUser(username)
+        const pwValidity = bcrypt.compareSync(password, user.password)
+        if (!pwValidity) {
+            return null
+        }
+        const token = user.jwt
+        const success = await deleteUser(username)
+        if (!success) {
+            return null
+        }
+        return token
+    } catch (err) {
+        console.log(`ERROR: Could not delete user: ${username}`)
         return { err }
     }
 }

@@ -8,7 +8,7 @@ app.use(express.json())
 app.use(cors()) // config cors so that front-end can use
 app.options('*', cors())
 
-import { createUser, loginUser, logoutUser } from './controller/user-controller.js';
+import { createUser, loginUser, logoutUser, deleteUser } from './controller/user-controller.js';
 import cookieSession from 'cookie-session';
 
 // cookie
@@ -27,6 +27,7 @@ router.get('/', (_, res) => res.send('Hello World from user-service'))
 router.post('/', createUser)
 router.post('/login', loginUser)
 router.post('/logout', logoutUser)
+router.post('/delete', deleteUser)
 
 app.use('/api/user', router).all((_, res) => {
     res.setHeader('content-type', 'application/json')
