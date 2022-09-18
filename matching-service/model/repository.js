@@ -24,8 +24,3 @@ db.once("open", () => console.log("Connected to Database"));
 export async function createMatch(params) {
     return new MatchModel(params);
 }
-
-export function passDatabase() {
-  const collection = db.collection('MatchModel');
-  return collection;
-}

@@ -24,10 +24,10 @@ const socket = socketIO.connect("http://localhost:8001")
 socket.on('connection', () => {
 })
 
-const data = "Hard"
-	// frontend needs to store socket.id in session storage/cookie. Browser refresh causes a new socket.id to be created, 
-	// which is not the expected input from the server side.
-socket.emit('find-match', data);
+// const data = "Hard"
+// 	// frontend needs to store socket.id in session storage/cookie. Browser refresh causes a new socket.id to be created, 
+// 	// which is not the expected input from the server side.
+// socket.emit('find-match', data);
 
 function App() {
     return (

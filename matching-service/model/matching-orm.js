@@ -1,4 +1,5 @@
-import { createMatch, passDatabase } from "./repository.js";
+import { createMatch } from "./repository.js";
+import MatchModel from "./matching-model.js";
 
 export async function ormCreateMatch(socketID, roomID, difficulty, matched) {
   try {
@@ -18,9 +19,8 @@ export async function ormCreateMatch(socketID, roomID, difficulty, matched) {
 }
 
 export async function existInDb(socketID) {
-  //console.log("socketId", socketID);
-  const db = passDatabase();
-  const collection = await db.findOne({ socketID: socketID });
+
+  const collection = await MatchModel.findOne({ socketID: socketID });
   console.log("collection is", collection);
   return collection !== null;
 }
@@ -28,16 +28,20 @@ export async function existInDb(socketID) {
 // returns roomID of the match, and updates the match found to matched.
 export async function findMatch(difficulty) {
   try {
-    const db = passDatabase();
     const filter = {
       difficulty: difficulty,
-      matched: false
+      matched: false,
     };
-    const document = await db.findOneAndUpdate(filter, {
-        "$set": {
-            "matched": true
-        }
-    });
+    const count = await MatchModel.count({});
+    console.log(count);
+    const document = await MatchModel.findOneAndUpdate(
+      { difficulty: difficulty, matched: false },
+      {
+        $set: {
+          matched: true,
+        },
+      }
+    );
     console.log(document);
     if (document === undefined || document === null) {
       return undefined;
@@ -52,13 +56,22 @@ export async function findMatch(difficulty) {
 // deletes all documents with the corresponding roomID.
 export async function deleteRoom(roomID) {
   try {
-    const db = passDatabase();
     const query = {
       roomID: roomID,
     };
-    await db.deleteMany(query);
+    await MatchModel.deleteMany(query);
   } catch (err) {
     console.log("ERROR: Could not create new Match");
+    return { err };
+  }
+}
+
+export async function findRoomName(socketID) {
+  try {
+    const doc = await MatchModel.findOne({socketID : socketID});
+    return doc.roomID;
+  } catch (err) {
+    console.log("ERROR: Could not find roomName");
     return { err };
   }
 }

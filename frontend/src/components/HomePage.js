@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom"
 
-function HomePage() {
+function HomePage({socket}) {
 	const [difficultyLevel, setDifficultyLevel] = useState("Easy");
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -22,6 +22,9 @@ function HomePage() {
 
 	const handleClick = () => {
 		setIsLoading(true);
+	// frontend needs to store socket.id in session storage/cookie. Browser refresh causes a new socket.id to be created, 
+	// which is not the expected input from the server side.
+		socket.emit('find-match', difficultyLevel);
 		//TODO: API to find match with another user
 		setTimeout(() => {
 			handleMatch();
