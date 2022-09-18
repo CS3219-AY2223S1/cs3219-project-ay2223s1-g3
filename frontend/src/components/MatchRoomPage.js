@@ -18,31 +18,29 @@ function MatchRoomPage({ socket, question }) {
 	}
 
 	useEffect(() => {
+
+		// send message event.
 		socket.on('send-message', message => {
 			setMessage(message.message);
 			console.log("called", message);
 		})
+
+		// disconnect event.
 		socket.on('disconnect-event', message => {
 			console.log(message.user + "/disconnected");
 			//navigate(-1);
 			navigate("/home");
 		})
-	}, [message]);
+	}, []);
 
-	// socket.on('send-message', message => {
-	// 	setMessage(message.message);
-	// 	console.log("called", message);
-	// })
-	// socket.on('disconnect-event', message => {
-	// 	console.log(message.user + "/disconnected");
-	// 	navigate(-1);
-	// })
 
 	const handleChange = (e) => {
 		setMessage(e.target.value);
 		socket.emit('send-message', e.target.value);
 		console.log("MSG", message);
 	}
+
+	// to add another disconnect event when user exits the broswer.
 
 	return (
 		<Box display={"flex"} flexDirection={"row"} justifyContent={"center"} alignItems={"center"}>

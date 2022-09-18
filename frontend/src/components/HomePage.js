@@ -22,13 +22,15 @@ function HomePage({socket}) {
 
 	const handleClick = () => {
 		setIsLoading(true);
-	// frontend needs to store socket.id in session storage/cookie. Browser refresh causes a new socket.id to be created, 
-	// which is not the expected input from the server side.
+	
+		// Socket connections are disconnected on page refresh and that is the expected behavior across browsers.
 		socket.emit('find-match', difficultyLevel);
 		//TODO: API to find match with another user
 		setTimeout(() => {
 			handleMatch();
 		}, 2000)
+
+		// frontend to call 'disconnect-event' after 30 seconds.
 	}
 
 	const handleMatch = () => {
