@@ -15,3 +15,8 @@ export async function createUser(params) {
   return new UserModel(params)
 }
 
+export async function usernameInDb(username) {
+  const exist = await UserModel.exists({username: username})
+  return exist
+}
+
