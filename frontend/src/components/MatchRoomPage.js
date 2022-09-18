@@ -27,7 +27,7 @@ function MatchRoomPage({ socket, question }) {
 			//navigate(-1);
 			navigate("/home");
 		})
-	}, []);
+	}, [message]);
 
 	// socket.on('send-message', message => {
 	// 	setMessage(message.message);
@@ -40,7 +40,7 @@ function MatchRoomPage({ socket, question }) {
 
 	const handleChange = (e) => {
 		setMessage(e.target.value);
-		socket.emit('send-message', message);
+		socket.emit('send-message', e.target.value);
 		console.log("MSG", message);
 	}
 
