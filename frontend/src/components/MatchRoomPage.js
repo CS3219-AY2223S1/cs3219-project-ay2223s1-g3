@@ -8,9 +8,12 @@ import { useLocation, useNavigate } from 'react-router-dom'
 function MatchRoomPage({ socket, question }) {
 	let navigate = useNavigate();
 	let location = useLocation();
+	const [user, setUser] = useState("Daemon");
 	const [message, setMessage] = useState("");
+
 	const handleLeaveChat = () => {
 		// TODO: disconnect the socket
+		socket.emit('disconnect-match', user);
 		navigate(-1);
 	}
 
@@ -19,12 +22,20 @@ function MatchRoomPage({ socket, question }) {
 			setMessage(message.message);
 			console.log("called", message);
 		})
+		socket.on('disconnect-event', message => {
+			console.log(message.user + "/disconnected");
+			//navigate(-1);
+			navigate("/home");
+		})
 	}, []);
 
 	// socket.on('send-message', message => {
-	// 	console.log('message', message.message);
 	// 	setMessage(message.message);
-	// 	console.log("called");
+	// 	console.log("called", message);
+	// })
+	// socket.on('disconnect-event', message => {
+	// 	console.log(message.user + "/disconnected");
+	// 	navigate(-1);
 	// })
 
 	const handleChange = (e) => {

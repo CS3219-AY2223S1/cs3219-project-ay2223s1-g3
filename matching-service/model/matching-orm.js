@@ -56,19 +56,19 @@ export async function findMatch(difficulty) {
 // deletes all documents with the corresponding roomID.
 export async function deleteRoom(roomID) {
   try {
-    const query = {
-      roomID: roomID,
-    };
-    await MatchModel.deleteMany(query);
+    console.log("room to delete", roomID)
+    await MatchModel.deleteMany({
+      roomID: roomID
+    });
   } catch (err) {
-    console.log("ERROR: Could not create new Match");
+    console.log("ERROR: Could not delete matches");
     return { err };
   }
 }
 
 export async function findRoomName(socketID) {
   try {
-    const doc = await MatchModel.findOne({socketID : socketID});
+    const doc = await MatchModel.findOne({ socketID : socketID });
     return doc.roomID;
   } catch (err) {
     console.log("ERROR: Could not find roomName");

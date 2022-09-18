@@ -32,7 +32,17 @@ async function findMatch(difficulty, socket, io) {
     }
 }
 
+async function disconnect_match(socket, io, message) {
+    const roomID = await findRoomName(socket.id);
+    await deleteRoom(roomID);
+    socket.to(roomID).emit('disconnect-event', { 
+        room: roomID, 
+        user: roomID + " room will be closed as" + message + " has left"});
+    socket.leave(roomID);
+}
+
 export function createListeners(socket, io) {
     socket.on('find-match', async(difficulty) => await findMatch(difficulty, socket, io));
     socket.on('send-message', async (message) => await sendMessage(socket, io, message));
+    socket.on('disconnect-match', async (message) => await disconnect_match(socket, io, message));
 }
