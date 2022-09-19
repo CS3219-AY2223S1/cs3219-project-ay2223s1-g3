@@ -2,6 +2,7 @@ import { Button, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { React, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'
+import PopupChat from './PopupChat';
 
 // TODO: need to find out how to use socketio to get users in the room and also do the online collaboration on the textfield
 
@@ -14,7 +15,10 @@ function MatchRoomPage({ socket, question }) {
 	const handleLeaveChat = () => {
 		// TODO: disconnect the socket
 		socket.emit('disconnect-match', user);
-		navigate(-1);
+		navigate("/home");
+
+		// browser refresh to reset socket. causes a stupid ass bug in popupchat.js if not here.
+		navigate(0);
 	}
 
 	useEffect(() => {
@@ -27,9 +31,13 @@ function MatchRoomPage({ socket, question }) {
 
 		// disconnect event.
 		socket.on('disconnect-event', message => {
+			socket.emit('disconnect-event', user);
 			console.log(message.user + "/disconnected");
 			//navigate(-1);
 			navigate("/home");
+
+			// browser refresh to reset socket. causes a stupid ass bug in popupchat.js if not here.
+			navigate(0);
 		})
 	}, []);
 
@@ -47,6 +55,7 @@ function MatchRoomPage({ socket, question }) {
 			<Box flex={1} marginBottom={"auto"} padding={"2rem"}>
 				<Typography variant={"h4"} marginBottom={"3rem"} fontWeight="bold">Users</Typography>
 				<Box>
+					<PopupChat socket={socket}/>
 					<Typography variant={"body1"} marginBottom={"1rem"} fontWeight="bold">User 1</Typography>
 					<Typography variant={"body1"} marginBottom={"1rem"} fontWeight="bold">User 2</Typography>
 				</Box>
