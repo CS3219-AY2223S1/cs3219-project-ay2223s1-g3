@@ -1,4 +1,4 @@
-import { createMatch } from "./repository.js";
+import { createMatch, findMatchAndUpdate, deleteMatches, findMatchDocument } from "./repository.js";
 import MatchModel from "./matching-model.js";
 
 export async function ormCreateMatch(socketID, roomID, chatRoomID, difficulty, matched) {
@@ -21,7 +21,7 @@ export async function ormCreateMatch(socketID, roomID, chatRoomID, difficulty, m
 
 export async function existInDb(socketID) {
 
-  const collection = await MatchModel.findOne({ socketID: socketID });
+  const collection = await findMatchDoc(socketID);
   console.log("collection is", collection);
   return collection !== null;
 }
@@ -29,20 +29,7 @@ export async function existInDb(socketID) {
 // returns roomID of the match, and updates the match found to matched.
 export async function findMatch(difficulty) {
   try {
-    const filter = {
-      difficulty: difficulty,
-      matched: false,
-    };
-    const count = await MatchModel.count({});
-    console.log(count);
-    const document = await MatchModel.findOneAndUpdate(
-      { difficulty: difficulty, matched: false },
-      {
-        $set: {
-          matched: true,
-        },
-      }
-    );
+    const document = await findMatchAndUpdate(difficulty, true);
     console.log(document);
     if (document === undefined || document === null) {
       return undefined;
@@ -58,9 +45,7 @@ export async function findMatch(difficulty) {
 export async function deleteRoom(roomID) {
   try {
     console.log("room to delete", roomID)
-    await MatchModel.deleteMany({
-      roomID: roomID
-    });
+    await deleteMatches(roomID);
   } catch (err) {
     console.log("ERROR: Could not delete matches");
     return { err };
@@ -69,7 +54,7 @@ export async function deleteRoom(roomID) {
 
 export async function findMatchDoc(socketID) {
   try {
-    const doc = await MatchModel.findOne({ socketID : socketID });
+    const doc = await findMatchDocument(socketID);
     return doc;
   } catch (err) {
     console.log("ERROR: Could not find roomName");
