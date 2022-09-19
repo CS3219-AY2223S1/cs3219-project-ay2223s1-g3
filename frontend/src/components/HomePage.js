@@ -10,6 +10,8 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom"
 
+const question_service_url = "http://localhost:8002/"
+
 function HomePage({socket}) {
 	const [difficultyLevel, setDifficultyLevel] = useState("Easy");
 	const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +24,7 @@ function HomePage({socket}) {
 
 	const handleClick = () => {
 		setIsLoading(true);
-	
+
 		// Socket connections are disconnected on page refresh and that is the expected behavior across browsers.
 		socket.emit('find-match', difficultyLevel);
 		//TODO: API to find match with another user
@@ -35,9 +37,22 @@ function HomePage({socket}) {
 
 	const handleMatch = () => {
 		setIsLoading(false);
-		//TODO: GET api for question, setQuestion as prop to pass to MatchRoomPage
-		let question = "What is love?"
-		navigate("/room", { state: { question: question } });
+
+		fetch(question_service_url + difficultyLevel)
+		.then(res => {
+			if (!res.ok) {
+				return Promise.reject(res)
+			}
+			return res.json()
+		})
+		.then(res => {
+			let question = "What is love?"
+			if (res && Object.keys(res).length !== 0) {
+				question = res
+			}
+			navigate("/room", { state: { question: question, difficultyLevel: difficultyLevel } });
+		})
+		.catch(err => console.log(err))
 	}
 
 	return (

@@ -67,8 +67,11 @@ function MatchRoomPage({ socket, question }) {
 					<Button onClick={handleLeaveChat}>Leave Chat</Button>
 				</Box>
 				<Box sx={{ border: 1 }} minHeight={"50vh"} padding={"1rem"}>
-					<Typography variant={"h5"} marginBottom={"1rem"} fontWeight="bold">Question:</Typography>
-					<Typography variant={"body1"} marginBottom={"1rem"} fontWeight="bold">{location.state.question}</Typography>
+					<Box display={"flex"} justifyContent={"space-between"} alignItems={"baseline"}>
+						<Typography variant={"h5"} marginBottom={"1rem"} fontWeight="bold">{location.state.question.title}</Typography>
+						<Typography variant={"body1"} marginBottom={"1rem"}>{location.state.difficultyLevel}</Typography>
+					</Box>
+					<Typography variant={"subtitle1"} marginBottom={"1rem"}>{location.state.question.description}</Typography>
 					<TextField
 						onChange={handleChange}
 						placeholder="MultiLine with rows: 2 and rowsMax: 4"
