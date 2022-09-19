@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom"
 
-function HomePage() {
+function HomePage({socket}) {
 	const [difficultyLevel, setDifficultyLevel] = useState("Easy");
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -22,10 +22,15 @@ function HomePage() {
 
 	const handleClick = () => {
 		setIsLoading(true);
+	
+		// Socket connections are disconnected on page refresh and that is the expected behavior across browsers.
+		socket.emit('find-match', difficultyLevel);
 		//TODO: API to find match with another user
 		setTimeout(() => {
 			handleMatch();
 		}, 2000)
+
+		// frontend to call 'disconnect-event' after 30 seconds.
 	}
 
 	const handleMatch = () => {

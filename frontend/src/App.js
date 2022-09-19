@@ -20,7 +20,9 @@ const theme = createTheme({
     },
 });
 
-const socket = socketIO.connect("http://localhost:3000")
+const socket = socketIO.connect("http://localhost:8001")
+socket.on('connection', () => {
+})
 
 function App() {
     return (
