@@ -47,6 +47,7 @@ async function findMatch(difficulty, socket, io) {
 
         // frontend listens to "match-found" and bring users to coding page".
         socket.to(doc.roomID).emit("match-found");
+        socket.emit("match-found"); // emit to sender too
     }
 }
 
