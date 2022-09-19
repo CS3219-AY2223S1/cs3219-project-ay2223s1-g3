@@ -28,7 +28,7 @@ function HomePage({socket}) {
 		return () => {
 			socket.off('match-found')
 		}
-	}, [])
+	})
 
 	const handleChange = (event) => {
 		setDifficultyLevel(event.target.value);
@@ -50,7 +50,6 @@ function HomePage({socket}) {
 		} else if (timer == 0) {
 			handleNoMatch();
 		}
-		console.log(timer)
 	}, [timer])
 
 	const handleMatch = () => {
