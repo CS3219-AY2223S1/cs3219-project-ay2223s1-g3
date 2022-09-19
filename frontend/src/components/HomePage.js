@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	Box,
 	Button,
@@ -10,13 +10,25 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom"
 
-const question_service_url = "http://localhost:8002/"
 
 function HomePage({socket}) {
 	const [difficultyLevel, setDifficultyLevel] = useState("Easy");
 	const [isLoading, setIsLoading] = useState(false);
+	const [loadingComment, setLoadingComment] = useState("");
+	const [timer, setTimer] = useState(-1);
+
+	const question_service_url = "http://localhost:8002/"
+	const match_timeout = 30
 
 	let navigate = useNavigate();
+
+	useEffect(() => {
+		socket.on('match-found', handleMatch);
+
+		return () => {
+			socket.off('match-found')
+		}
+	}, [])
 
 	const handleChange = (event) => {
 		setDifficultyLevel(event.target.value);
@@ -24,19 +36,26 @@ function HomePage({socket}) {
 
 	const handleClick = () => {
 		setIsLoading(true);
+		setLoadingComment("Finding match...");
 
 		// Socket connections are disconnected on page refresh and that is the expected behavior across browsers.
 		socket.emit('find-match', difficultyLevel);
-		//TODO: API to find match with another user
-		setTimeout(() => {
-			handleMatch();
-		}, 2000)
-
-		// frontend to call 'disconnect-event' after 30 seconds.
+		setTimer(match_timeout) // triggers useEffect
 	}
 
+	useEffect(() => {
+		if (timer > 0) {
+			setTimeout(() => setTimer(timer-1), 1000)
+			setLoadingComment("Finding match... (" + timer + "s)")
+		} else if (timer == 0) {
+			handleNoMatch();
+		}
+		console.log(timer)
+	}, [timer])
+
 	const handleMatch = () => {
-		setIsLoading(false);
+		setTimer(-1);
+		setLoadingComment("Fetching question...");
 
 		fetch(question_service_url + difficultyLevel)
 		.then(res => {
@@ -53,6 +72,12 @@ function HomePage({socket}) {
 			navigate("/room", { state: { question: question, difficultyLevel: difficultyLevel } });
 		})
 		.catch(err => console.log(err))
+	}
+
+	const handleNoMatch = () => {
+		socket.emit("disconnect-event")
+		setIsLoading(false);
+		setLoadingComment("");
 	}
 
 	return (
@@ -72,8 +97,12 @@ function HomePage({socket}) {
 					<MenuItem value={"Hard"}>Hard</MenuItem>
 				</Select>
 			</FormControl>
-			{isLoading ? <CircularProgress /> :
-				<Button onClick={handleClick}>Let's go</Button>
+			{isLoading ?
+			<>
+			<CircularProgress />
+			{loadingComment}
+			</>
+			: <Button onClick={handleClick}>Let's go</Button>
 			}
 		</Box>
 	)

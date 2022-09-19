@@ -6,7 +6,7 @@ async function sendChatMessage(socket, io, message) {
     console.log("room connected to", socket.rooms);
     const clients = io.sockets.adapter.rooms.get(doc.chatRoomID);
     console.log("clients are", clients)
-    socket.broadcast.to(doc.chatRoomID).emit('send-chat-message', { room: doc.chatRoomID, message: message }); 
+    socket.broadcast.to(doc.chatRoomID).emit('send-chat-message', { room: doc.chatRoomID, message: message });
     //socket.emit('send-chat-message', { room: doc.chatRoomID, message: message })
 }
 
@@ -14,7 +14,7 @@ async function sendMessage(socket, io, message) {
     const doc = await findMatchDoc(socket.id)
     console.log("socket making message", socket.id, message)
     console.log("room connected to", socket.rooms);
-    socket.to(doc.roomID).emit('send-message', { room: doc.roomID, message: message }); 
+    socket.to(doc.roomID).emit('send-message', { room: doc.roomID, message: message });
 }
 
 async function findMatch(difficulty, socket, io) {
@@ -27,7 +27,7 @@ async function findMatch(difficulty, socket, io) {
     let chatRoomID = "";
     let roomID = "";
     if (doc === undefined || doc === null) {
-        // create a unique roomID, cannot just use socket.id as the function sendMessage will fail. 
+        // create a unique roomID, cannot just use socket.id as the function sendMessage will fail.
         //socket.to(socket.id) wont work as .to() will not send a message to a room with its own id.
         roomID = socket.id + "collab";
         chatRoomID = socket.id + "chatRoom";
@@ -36,8 +36,8 @@ async function findMatch(difficulty, socket, io) {
         socket.join(chatRoomID);
         io.emit("new room created", socket.id);
         io.emit("user joined room", socket.id);
-    } 
-    
+    }
+
     // case where a match is found. front end needs to listen to the socket.io emit
     else {
         const newMatch = ormCreateMatch(socket.id, doc.roomID, doc.chatRoomID, difficulty, true);
@@ -46,15 +46,15 @@ async function findMatch(difficulty, socket, io) {
         io.emit("user joined room", roomID);
 
         // frontend listens to "match-found" and bring users to coding page".
-        socket.to(roomID).emit("match-found");
+        socket.to(doc.roomID).emit("match-found");
     }
 }
 
 async function disconnect_match(socket, io, message) {
     const doc = await findMatchDoc(socket.id);
     await deleteRoom(doc.roomID);
-    socket.to(doc.roomID).emit('disconnect-event', { 
-        room: doc.roomID, 
+    socket.to(doc.roomID).emit('disconnect-event', {
+        room: doc.roomID,
         user: doc.roomID + " room will be closed as" + message + " has left"});
     socket.leave(doc.roomID);
     socket.leave(doc.chatRoomID);
