@@ -15,3 +15,18 @@ export async function createUser(params) {
   return new UserModel(params)
 }
 
+export async function usernameInDb(username) {
+  const exists = await UserModel.exists({username: username})
+  return exists
+}
+
+export async function getUser(username) {
+  const user = await UserModel.findOne({username: username})
+  return user
+}
+
+export async function deleteUser(username) {
+  const success = await UserModel.deleteOne({username: username})
+  return success
+}
+
