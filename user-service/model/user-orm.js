@@ -81,3 +81,24 @@ export async function ormDeleteUser(username, password) {
     }
 }
 
+export async function ormPwChange(username, oldPw, newPw) {
+    try {
+        const exists = await usernameInDb(username)
+        if (!exists) {
+            return null
+        }
+        const user = await getUser(username)
+        const pwValidity = bcrypt.compareSync(oldPw, user.password)
+        if (!pwValidity) {
+            return null
+        }
+        // authentication check?
+        user.password = bcrypt.hashSync(newPw)
+        user.save()
+        return user
+    } catch (err) {
+        console.log(`ERROR: Could not change password for user: ${username}`)
+        return { err }
+    }
+}
+

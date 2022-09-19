@@ -2,6 +2,7 @@ import { ormCreateUser as _createUser } from '../model/user-orm.js'
 import { ormLoginUser as _loginUser } from '../model/user-orm.js'
 import { ormLogoutUser as _logoutUser } from '../model/user-orm.js'
 import { ormDeleteUser as _deleteUser } from '../model/user-orm.js'
+import { ormPwChange as _pwChange } from '../model/user-orm.js'
 
 export async function createUser(req, res) {
     try {
@@ -32,13 +33,13 @@ export async function loginUser(req, res) {
         const { username, password } = req.body
         if (username && password) {
             const resp = await _loginUser(username, password)
-            if (resp.err) {
-                console.log(`Unable to retrieve user: ${username}`)
-                return res.status(400).json({message: `Unable to retrieve user: ${username}`})
-            }
             if (!resp) {
                 console.log('Incorrect username or password. Please try again!')
                 return res.status(400).json({message: 'Incorrect username or password. Please try again!'})
+            }
+            if (resp.err) {
+                console.log(`Unable to retrieve user: ${username}`)
+                return res.status(400).json({message: `Unable to retrieve user: ${username}`})
             }
             console.log(`User ${username} logged in successfully!`)
             return res.status(201).json({message: 'Login successful!', userJWT: resp.jwt})
@@ -54,13 +55,13 @@ export async function logoutUser(req, res) {
         const { username } = req.body
         if (username) {
             const resp = await _logoutUser(username)
-            if (resp.err) {
-                console.log(`Unable to retrieve user: ${username}`)
-                return res.status(400).json({message: `Unable to retrieve user: ${username}`})
-            }
             if (!resp) {
                 console.log('User does not exist!')
                 return res.status(400).json({message: 'User does not exist!'})
+            }
+            if (resp.err) {
+                console.log(`Unable to retrieve user: ${username}`)
+                return res.status(400).json({message: `Unable to retrieve user: ${username}`})
             }
             // middleware authentication blacklist logic here
             const token = resp
@@ -78,13 +79,13 @@ export async function deleteUser(req, res) {
         const { username, password } = req.body
         if (username && password) {
             const resp = await _deleteUser(username, password)
-            if (resp.err) {
-                console.log(`Unable to retrieve user: ${username}`)
-                return res.status(400).json({message: `Unable to retrieve user: ${username}`})
-            }
             if (!resp) {
                 console.log('Unable to delete account. Please check your password!')
                 return res.status(400).json({message: 'Unable to delete account. Please check your password!'})
+            }
+            if (resp.err) {
+                console.log(`Unable to retrieve user: ${username}`)
+                return res.status(400).json({message: `Unable to retrieve user: ${username}`})
             }
             // middleware authentication blacklist logic here
             const token = resp
@@ -94,5 +95,27 @@ export async function deleteUser(req, res) {
     } catch (err) {
         console.log(err)
         return res.status(500).json({message: 'Error occurred when deleting account!'})
+    }
+}
+
+export async function pwChange(req, res) {
+    try {
+        const { username, oldPw, newPw } = req.body
+        if (username && oldPw && newPw) {
+            const resp = await _pwChange(username, oldPw, newPw)
+            if (!resp) {
+                console.log('Unable to change your password. Please check your old password!')
+                return res.status(400).json({message: 'Unable to change your password. Please check your old password!'})
+            }
+            if (resp.err) {
+                console.log(`Unable to retrieve user: ${username}`)
+                return res.status(400).json({message: `Unable to retrieve user: ${username}`})
+            }
+            console.log(`Changed password of username: ${username} successfully!`)
+            return res.status(201).json({message: `Changed password of username: ${username} successfully!`})
+        }
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({message: 'Error occurred when changing password!'})
     }
 }
