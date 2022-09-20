@@ -49,7 +49,7 @@ function HomePage({socket}) {
 		if (timer > 0) {
 			setTimeout(() => setTimer(timer-1), 1000)
 			setLoadingComment("Finding match... (" + timer + "s)")
-		} else if (timer == 0) {
+		} else if (timer === 0) {
 			handleNoMatch();
 		}
 	}, [timer])
@@ -104,7 +104,8 @@ function HomePage({socket}) {
 			</FormControl>
 			{isLoading ?
 			<>
-			<CircularProgress />
+			<Button onClick={handleNoMatch} color={"warning"}>Cancel matching</Button>
+			<CircularProgress/>
 			{loadingComment}
 			</>
 			: <Button onClick={handleClick}>Let's go</Button>
