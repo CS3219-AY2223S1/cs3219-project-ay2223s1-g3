@@ -56,6 +56,9 @@ async function findMatch(difficulty, socket, io) {
 
 async function disconnect_match(socket, io, message) {
     const doc = await findMatchDoc(socket.id);
+    if (doc === null) {
+        return;
+    }
     await deleteRoom(doc.roomID);
     socket.to(doc.roomID).emit('disconnect-event', {
         room: doc.roomID,
@@ -69,4 +72,12 @@ export function createListeners(socket, io) {
     socket.on('send-chat-message', async(message) => await sendChatMessage(socket, io, message));
     socket.on('send-message', async (message) => await sendMessage(socket, io, message));
     socket.on('disconnect-match', async (message) => await disconnect_match(socket, io, message));
+
+    socket.on('disconnecting',  () => {
+        socket.adapter.rooms.forEach((value, key) => {
+            if (key !== socket.id) {
+                disconnect_match(socket, io, socket.id); // TODO: replace temp message
+            }
+        })
+    })
 }

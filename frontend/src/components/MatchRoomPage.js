@@ -4,8 +4,6 @@ import { React, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'
 import PopupChat from './PopupChat';
 
-// TODO: need to find out how to use socketio to get users in the room and also do the online collaboration on the textfield
-
 function MatchRoomPage({ socket }) {
 	let navigate = useNavigate();
 	let location = useLocation();
@@ -13,7 +11,6 @@ function MatchRoomPage({ socket }) {
 	const [message, setMessage] = useState("");
 
 	const handleLeaveChat = () => {
-		// TODO: disconnect the socket
 		socket.emit('disconnect-match', user);
 		navigate("/home");
 
@@ -47,8 +44,6 @@ function MatchRoomPage({ socket }) {
 		socket.emit('send-message', e.target.value);
 		console.log("MSG", message);
 	}
-
-	// to add another disconnect event when user exits the broswer.
 
 	return (
 		<Box display={"flex"} flexDirection={"row"} justifyContent={"center"} alignItems={"center"}>
