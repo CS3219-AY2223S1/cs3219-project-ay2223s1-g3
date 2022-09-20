@@ -6,7 +6,7 @@ import PopupChat from './PopupChat';
 
 // TODO: need to find out how to use socketio to get users in the room and also do the online collaboration on the textfield
 
-function MatchRoomPage({ socket, question }) {
+function MatchRoomPage({ socket }) {
 	let navigate = useNavigate();
 	let location = useLocation();
 	const [user, setUser] = useState("Daemon");
@@ -56,8 +56,9 @@ function MatchRoomPage({ socket, question }) {
 				<Typography variant={"h4"} marginBottom={"3rem"} fontWeight="bold">Users</Typography>
 				<Box>
 					<PopupChat socket={socket}/>
-					<Typography variant={"body1"} marginBottom={"1rem"} fontWeight="bold">User 1</Typography>
-					<Typography variant={"body1"} marginBottom={"1rem"} fontWeight="bold">User 2</Typography>
+					{location.state.roommates.map((roommate, index) => (
+					<Typography key={index} variant={"body1"} marginBottom={"1rem"} fontWeight="bold">{roommate}</Typography>
+					))}
 				</Box>
 			</Box>
 

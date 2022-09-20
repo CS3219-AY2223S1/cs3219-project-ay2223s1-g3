@@ -45,8 +45,12 @@ async function findMatch(difficulty, socket, io) {
         socket.join(doc.chatRoomID);
         io.emit("user joined room", roomID);
 
+        const roommates = await io.in(doc.roomID).fetchSockets()
+        const roommateIds = roommates.map(socket => socket.id)
         // frontend listens to "match-found" and bring users to coding page".
-        io.to(doc.roomID).emit("match-found");
+        io.to(doc.roomID).emit("match-found", {
+            roommates: roommateIds
+        });
     }
 }
 

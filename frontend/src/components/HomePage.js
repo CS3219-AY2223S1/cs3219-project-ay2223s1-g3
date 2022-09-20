@@ -23,12 +23,14 @@ function HomePage({socket}) {
 	let navigate = useNavigate();
 
 	useEffect(() => {
-		socket.on('match-found', handleMatch);
+		socket.on('match-found', message => {
+			handleMatch(message.roommates)
+		});
 
 		return () => {
-			socket.off('match-found')
+			socket.off('match-found');
 		}
-	})
+	}, [difficultyLevel])
 
 	const handleChange = (event) => {
 		setDifficultyLevel(event.target.value);
@@ -52,7 +54,7 @@ function HomePage({socket}) {
 		}
 	}, [timer])
 
-	const handleMatch = () => {
+	const handleMatch = (roommates) => {
 		setTimer(-1);
 		setLoadingComment("Fetching question...");
 
@@ -68,7 +70,11 @@ function HomePage({socket}) {
 			if (res && Object.keys(res).length !== 0) {
 				question = res
 			}
-			navigate("/room", { state: { question: question, difficultyLevel: difficultyLevel } });
+			navigate("/room", { state: {
+				question: question,
+				difficultyLevel: difficultyLevel,
+				roommates: roommates
+			} });
 		})
 		.catch(err => console.log(err))
 	}
