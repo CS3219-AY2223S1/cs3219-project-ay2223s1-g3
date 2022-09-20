@@ -80,7 +80,7 @@ function HomePage({socket}) {
 	}
 
 	const handleNoMatch = () => {
-		socket.emit("disconnect-event")
+		socket.emit("disconnect-match")
 		setIsLoading(false);
 		setLoadingComment("");
 	}
