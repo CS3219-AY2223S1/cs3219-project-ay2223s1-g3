@@ -1,7 +1,7 @@
 import { createUser, usernameInDb, getUser, deleteUser } from './repository.js';
+import { addToBlacklist } from './token-blacklist.js'
+import { signToken, verifyToken } from '../middleware/authentication.js'
 import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import 'dotenv/config'
 
 //need to separate orm functions from repository to decouple business logic from persistence
 export async function ormCreateUser(username, originalPassword) {
@@ -31,71 +31,92 @@ export async function ormLoginUser(username, password) {
         if (!pwValidity) {
             return null
         }
-        const token = jwt.sign({id: username}, process.env.JWT_KEY, {expiresIn: 86400})
-        user.jwt = token
+        const jwt = await signToken(username)
         user.save()
-        return user
+        return jwt
     } catch (err) {
         console.log(`ERROR: Could not retrieve user: ${username}`)
         return { err }
     }
 }
 
-export async function ormLogoutUser(username) {
+export async function ormLogoutUser(username, jwt) {
     try {
         const exists = await usernameInDb(username)
         if (!exists) {
-            return null
+            return false
         }
         const user = await getUser(username)
-        const token = user.jwt
-        user.jwt = null
-        user.save()
-        return token
+        // authentication
+        const verification = await verifyToken(username, jwt)
+        if (!verification || verification.err) {
+            console.log(`ERROR: Verification failed for user: ${username}`)
+            return false
+        }
+        // blacklisting
+        const exp = verification.exp
+        if (!await addToBlacklist(jwt, exp)) {
+            console.log(`ERROR: Unable to add user: ${username}'s JWT to redis database`)
+            return false
+        }
+        return true
     } catch (err) {
         console.log(`ERROR: Could not retrieve user: ${username}`)
         return { err }
     }
 }
 
-export async function ormDeleteUser(username, password) {
+export async function ormDeleteUser(username, password, jwt) {
     try {
         const exists = await usernameInDb(username)
         if (!exists) {
-            return null
+            return false
         }
         const user = await getUser(username)
         const pwValidity = bcrypt.compareSync(password, user.password)
         if (!pwValidity) {
-            return null
+            return false
         }
-        const token = user.jwt
+        // authentication
+        const verification = await verifyToken(username, jwt)
+        if (!verification || verification.err) {
+            console.log(`ERROR: Verification failed for user: ${username}`)
+            return false
+        }
+        // blacklisting
+        const exp = verification.exp
+        if (!await addToBlacklist(jwt, exp)) {
+            console.log(`ERROR: Unable to add user: ${username}'s JWT to redis database`)
+            return false
+        }
         const success = await deleteUser(username)
-        if (!success) {
-            return null
-        }
-        return token
+        return success
     } catch (err) {
         console.log(`ERROR: Could not delete user: ${username}`)
         return { err }
     }
 }
 
-export async function ormPwChange(username, oldPw, newPw) {
+export async function ormPwChange(username, oldPw, newPw, jwt) {
     try {
         const exists = await usernameInDb(username)
         if (!exists) {
-            return null
+            return false
         }
         const user = await getUser(username)
         const pwValidity = bcrypt.compareSync(oldPw, user.password)
         if (!pwValidity) {
-            return null
+            return false
         }
-        // authentication check?
+        // authentication
+        const verification = await verifyToken(username, jwt)
+        if (!verification || verification.err) {
+            console.log(`ERROR: Verification failed for user: ${username}`)
+            return false
+        }
         user.password = bcrypt.hashSync(newPw)
         user.save()
-        return user
+        return true
     } catch (err) {
         console.log(`ERROR: Could not change password for user: ${username}`)
         return { err }
