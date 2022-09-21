@@ -4,16 +4,13 @@ import { React, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'
 import PopupChat from './PopupChat';
 
-// TODO: need to find out how to use socketio to get users in the room and also do the online collaboration on the textfield
-
-function MatchRoomPage({ socket, question }) {
+function MatchRoomPage({ socket }) {
 	let navigate = useNavigate();
 	let location = useLocation();
 	const [user, setUser] = useState("Daemon");
 	const [message, setMessage] = useState("");
 
 	const handleLeaveChat = () => {
-		// TODO: disconnect the socket
 		socket.emit('disconnect-match', user);
 		navigate("/home");
 
@@ -48,16 +45,15 @@ function MatchRoomPage({ socket, question }) {
 		console.log("MSG", message);
 	}
 
-	// to add another disconnect event when user exits the broswer.
-
 	return (
 		<Box display={"flex"} flexDirection={"row"} justifyContent={"center"} alignItems={"center"}>
 			<Box flex={1} marginBottom={"auto"} padding={"2rem"}>
 				<Typography variant={"h4"} marginBottom={"3rem"} fontWeight="bold">Users</Typography>
 				<Box>
 					<PopupChat socket={socket}/>
-					<Typography variant={"body1"} marginBottom={"1rem"} fontWeight="bold">User 1</Typography>
-					<Typography variant={"body1"} marginBottom={"1rem"} fontWeight="bold">User 2</Typography>
+					{location.state.roommates.map((roommate, index) => (
+					<Typography key={index} variant={"body1"} marginBottom={"1rem"} fontWeight="bold">{roommate}</Typography>
+					))}
 				</Box>
 			</Box>
 
