@@ -1,6 +1,17 @@
 import redis from 'redis'
+import 'dotenv/config'
 
-const redisClient = redis.createClient()
+const redisHost = process.env.ENV == "PROD" ? process.env.REDIS_CLOUD_IP : process.env.REDIS_LOCAL_IP
+const redisPort = process.env.ENV == "PROD" ? process.env.REDIS_CLOUD_PORT : process.env.REDIS_LOCAL_PORT
+const redisPw = process.env.ENV == "PROD" ? process.env.REDIS_CLOUD_PW : null
+
+const redisClient = redis.createClient({
+    socket: {
+        host: redisHost,
+        port: redisPort
+    },
+    password: redisPw
+})
 redisClient.on('error', (err) => {
     console.log(`Unable to create redis with error: ${err}`)
 })
