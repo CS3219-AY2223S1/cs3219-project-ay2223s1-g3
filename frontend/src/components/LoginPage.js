@@ -14,7 +14,7 @@ import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 function LoginPage() {
 	const [username, setUsername] = useState("")
@@ -23,45 +23,46 @@ function LoginPage() {
 	const [dialogTitle, setDialogTitle] = useState("")
 	const [dialogMsg, setDialogMsg] = useState("")
 	const [isLoginSuccess, setIsLoginSuccess] = useState(false)
-	const [userToken, setUserToken] = useState({});
-
-	//TODO: store jwt as cookie, integrate login APIs
+	const [token, setToken] = useState("")
+	const navigate = useNavigate();
 
 	const handleLogin = async () => {
-		setUserToken({ token: "a" })
-		// setIsLoginSuccess(false)
-		// const res = await axios.post(URL_USER_SVC, { username, password })
-		// 	.catch((err) => {
-		// 		if (err.response.status === STATUS_CODE_CONFLICT) {
-		// 			setErrorDialog('This username already exists')
-		// 		} else {
-		// 			setErrorDialog('Please try again later')
-		// 		}
-		// 	})
-		// if (res && res.status === STATUS_CODE_CREATED) {
-		// 	setSuccessDialog('Account successfully created')
-		// 	setIsLoginSuccess(true)
-		// }
+		setIsLoginSuccess(false)
+		const res = await axios.post(URL_USER_SVC + "/login", { username, password })
+			.catch((err) => {
+				if (err.response.status === STATUS_CODE_CONFLICT) {
+					setErrorDialog(err.response.data.message)
+				} else {
+					setErrorDialog(err.response.data.message)
+				}
+			})
+		if (res && res.status === STATUS_CODE_CREATED) {
+			setToken(res.data.userJWT)
+			setIsLoginSuccess(true)
+			navigate("/home", { state: { token: token, username: username } })
+		}
 	}
 
 	const closeDialog = () => setIsDialogOpen(false)
-
-	const setSuccessDialog = (msg) => {
-		setIsDialogOpen(true)
-		setDialogTitle('Success')
-		setDialogMsg(msg)
-	}
 
 	const setErrorDialog = (msg) => {
 		setIsDialogOpen(true)
 		setDialogTitle('Error')
 		setDialogMsg(msg)
 	}
-	console.log(Object.keys(userToken))
+
+	const handleForgetPassword = () => {
+		navigate("/signup", { state: "resetPassword" });
+
+	}
+
+	const handleSignUp = () => {
+		navigate("/signup", { state: "signup" });
+
+	}
 
 	return (
 		<Box display={"flex"} flexDirection={"row"} height="100vh">
-			{userToken && Object.keys(userToken).length !== 0 && (<Navigate to="/home" replace={true} />)}
 			<Box display={"flex"} flex={1} flexDirection="column" justifyContent="center">
 				<Box display={"flex"} flexDirection="column" padding="25%">
 					<Typography variant={"h4"} marginBottom={"1rem"} fontWeight="bold">Welcome Back</Typography>
@@ -80,9 +81,17 @@ function LoginPage() {
 						type="password"
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
-						sx={{ marginBottom: "2rem" }}
+						sx={{ marginBottom: "1rem" }}
 					/>
-					<Box display={"flex"} flexDirection={"row"} justifyContent={"flex-end"}>
+					<Typography variant={"body2"}>
+						<a style={{
+							fontWeight: "bolder",
+							textDecoration: "none",
+							color: "#1976d2",
+						}}
+							href={""} onClick={handleForgetPassword}>Reset password</a>
+					</Typography>
+					<Box display={"flex"} flexDirection={"row"} justifyContent={"flex-end"} marginTop="0.5rem">
 						<Button variant={"contained"} onClick={handleLogin} fullWidth><b>Login</b></Button>
 					</Box>
 					<Typography variant={"body2"} marginTop={"1rem"}>Don't have an account?
@@ -92,7 +101,7 @@ function LoginPage() {
 							textDecoration: "none",
 							color: "#1976d2"
 						}}
-							href={window.location.pathname.replace("login", "signup")}>Sign up now</a>
+							href={""} onClick={handleSignUp}>Sign up now</a>
 					</Typography>
 					<Dialog
 						open={isDialogOpen}

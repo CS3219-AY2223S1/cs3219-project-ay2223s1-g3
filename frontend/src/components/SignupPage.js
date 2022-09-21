@@ -13,30 +13,53 @@ import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 //TODO: integrate sign up APIs
 
 function SignupPage() {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
+    const [confirmPassword, setConfirmPassword] = useState("")
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [dialogTitle, setDialogTitle] = useState("")
     const [dialogMsg, setDialogMsg] = useState("")
     const [isSignupSuccess, setIsSignupSuccess] = useState(false)
 
+    let location = useLocation();
+
     const handleSignup = async () => {
         setIsSignupSuccess(false)
+        if (password !== confirmPassword) {
+            setErrorDialog("Passwords do not match")
+            return;
+        }
         const res = await axios.post(URL_USER_SVC, { username, password })
             .catch((err) => {
                 if (err.response.status === STATUS_CODE_CONFLICT) {
-                    setErrorDialog('This username already exists')
+                    setErrorDialog(err.response.data.message)
                 } else {
-                    setErrorDialog('Please try again later')
+                    setErrorDialog(err.response.data.message)
                 }
             })
         if (res && res.status === STATUS_CODE_CREATED) {
             setSuccessDialog('Account successfully created')
+            setIsSignupSuccess(true)
+        }
+    }
+
+    const handleResetPassword = async () => {
+        setIsSignupSuccess(false)
+        const res = await axios.post(URL_USER_SVC + "/pwChange", { username: username, oldPw: password, newPw: confirmPassword })
+            .catch((err) => {
+                if (err.response.status === STATUS_CODE_CONFLICT) {
+                    setErrorDialog(err.response.data.message)
+                } else {
+                    setErrorDialog(err.response.data.message)
+                }
+            })
+        if (res && res.status === STATUS_CODE_CREATED) {
+            setSuccessDialog('Password successfully reset')
             setIsSignupSuccess(true)
         }
     }
@@ -59,7 +82,9 @@ function SignupPage() {
         <Box display={"flex"} flexDirection={"row"} height="100vh">
             <Box display={"flex"} flex={1} flexDirection="column" justifyContent="center">
                 <Box display={"flex"} flexDirection="column" padding="25%">
-                    <Typography variant={"h4"} marginBottom={"1rem"} fontWeight="bold">Create your account</Typography>
+                    <Typography variant={"h4"} marginBottom={"1rem"} fontWeight="bold">
+                        {location.state === "signup" ? "Create your account" : "Change Password"}
+                    </Typography>
                     <TextField
                         label="Username"
                         variant="standard"
@@ -76,8 +101,19 @@ function SignupPage() {
                         onChange={(e) => setPassword(e.target.value)}
                         sx={{ marginBottom: "2rem" }}
                     />
+                    <TextField
+                        label="Confirm Password"
+                        variant="standard"
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        sx={{ marginBottom: "2rem" }}
+                    />
                     <Box display={"flex"} flexDirection={"row"} justifyContent={"flex-end"}>
-                        <Button variant={"contained"} onClick={handleSignup} fullWidth><b>Sign up</b></Button>
+                        {location.state === "signup" ?
+                            <Button variant={"contained"} onClick={handleSignup} fullWidth><b>Sign up</b></Button>
+                            : <Button variant={"contained"} onClick={handleResetPassword} fullWidth><b>Reset Password</b></Button>
+                        }
                     </Box>
                     <Dialog
                         open={isDialogOpen}
@@ -89,7 +125,7 @@ function SignupPage() {
                         </DialogContent>
                         <DialogActions>
                             {isSignupSuccess
-                                ? <Button component={Link} to="/login">Sign up</Button>
+                                ? <Button component={Link} to="/login">Login</Button>
                                 : <Button onClick={closeDialog}>Done</Button>
                             }
                         </DialogActions>
