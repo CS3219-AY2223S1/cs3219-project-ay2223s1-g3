@@ -1,4 +1,4 @@
-import { Button, TextField, Typography } from '@mui/material';
+import { Button, Divider, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { React, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -38,7 +38,6 @@ function MatchRoomPage({ socket }) {
 		})
 	}, []);
 
-
 	const handleChange = (e) => {
 		setMessage(e.target.value);
 		socket.emit('send-message', e.target.value);
@@ -47,36 +46,48 @@ function MatchRoomPage({ socket }) {
 
 	return (
 		<Box display={"flex"} flexDirection={"row"} justifyContent={"center"} alignItems={"center"}>
-			<Box flex={1} marginBottom={"auto"} padding={"2rem"}>
-				<Typography variant={"h4"} marginBottom={"3rem"} fontWeight="bold">Users</Typography>
+			<Box style={{ background: "linear-gradient(#1976d2, #8dc3f7)" }} height="100vh" display={"flex"} flexDirection={"column"} justifyContent={"center"} flex={0.4} padding={"2rem"}>
 				<Box>
-					<PopupChat socket={socket}/>
-					{location.state.roommates.map((roommate, index) => (
-					<Typography key={index} variant={"body1"} marginBottom={"1rem"} fontWeight="bold">{roommate}</Typography>
-					))}
+					<Typography variant={"h5"} marginBottom={"1rem"} color="white" fontWeight="bold">Peer Group</Typography>
+					<Box>
+						{location.state.roommates.map((roommate, index) => (
+							<Typography key={index} color="white" marginBottom={"1rem"}>{roommate}</Typography>
+						))}
+					</Box>
 				</Box>
 			</Box>
-
-			<Box flex={4} padding={"2rem"}>
+			<Divider style={{ marginRight: "2rem" }} orientation='vertical' />
+			<Box flex={2.5} padding={"3rem"}>
 				<Box display={"flex"} justifyContent={"space-between"} flexDirection={"row"} marginBottom={"1rem"}>
 					<Typography variant={"h4"} marginBottom={"1rem"} fontWeight="bold">PeerPrep</Typography>
-					<Button onClick={handleLeaveChat}>Leave Chat</Button>
 				</Box>
-				<Box sx={{ border: 1 }} minHeight={"50vh"} padding={"1rem"}>
+				<Box minHeight={"50vh"}>
 					<Box display={"flex"} justifyContent={"space-between"} alignItems={"baseline"}>
 						<Typography variant={"h5"} marginBottom={"1rem"} fontWeight="bold">{location.state.question.title}</Typography>
-						<Typography variant={"body1"} marginBottom={"1rem"}>{location.state.difficultyLevel}</Typography>
+						<Typography
+							color={location.state.difficultyLevel === "Hard" ? "red" : location.state.difficultyLevel === "Medium" ? "orange" : "green"}
+							variant={"body1"}
+							marginBottom={"1rem"}>
+							<b>{location.state.difficultyLevel}</b>
+						</Typography>
 					</Box>
-					<Typography variant={"subtitle1"} marginBottom={"1rem"}>{location.state.question.description}</Typography>
+					<Divider />
+					<Typography variant={"subtitle1"} marginTop={"1rem"} marginBottom="1rem">{location.state.question.description}</Typography>
 					<TextField
+						inputProps={{ style: { fontFamily: "monospace" } }}
+						style={{ backgroundColor: "whitesmoke", borderColor: "grey" }}
 						onChange={handleChange}
-						placeholder="MultiLine with rows: 2 and rowsMax: 4"
+						placeholder="Write your solution here"
 						multiline
 						rows={25}
 						fullWidth
 						value={message}
 					/>
 				</Box>
+			</Box>
+			<Box flex={0.3} >
+				<Button variant="contained" color="error" style={{ marginLeft: "3rem", marginBottom: "50rem" }} onClick={handleLeaveChat}><b>Exit</b></Button>
+				<PopupChat socket={socket} />
 			</Box>
 		</Box >
 	)
