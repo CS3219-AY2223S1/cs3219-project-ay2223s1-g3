@@ -17,7 +17,7 @@ async function sendMessage(socket, io, message) {
     socket.to(doc.roomID).emit('send-message', { room: doc.roomID, message: message });
 }
 
-async function findMatch(difficulty, socket, io) {
+async function findMatch(difficulty, socket, io, username) {
     console.log("findMatch called", socket.id);
     const ifExist = await existInDb(socket.id)
     if (ifExist) {
@@ -31,7 +31,7 @@ async function findMatch(difficulty, socket, io) {
         //socket.to(socket.id) wont work as .to() will not send a message to a room with its own id.
         roomID = socket.id + "collab";
         chatRoomID = socket.id + "chatRoom";
-        const newMatch = ormCreateMatch(socket.id, roomID, chatRoomID, difficulty, false);
+        const newMatch = ormCreateMatch(socket.id, roomID, chatRoomID, difficulty, false, username);
         socket.join(roomID);
         socket.join(chatRoomID);
         io.emit("new room created", socket.id);
@@ -40,16 +40,14 @@ async function findMatch(difficulty, socket, io) {
 
     // case where a match is found. front end needs to listen to the socket.io emit
     else {
-        const newMatch = ormCreateMatch(socket.id, doc.roomID, doc.chatRoomID, difficulty, true);
+        const newMatch = ormCreateMatch(socket.id, doc.roomID, doc.chatRoomID, difficulty, true, username);
         socket.join(doc.roomID);
         socket.join(doc.chatRoomID);
         io.emit("user joined room", roomID);
 
-        const roommates = await io.in(doc.roomID).fetchSockets()
-        const roommateIds = roommates.map(socket => socket.id)
         // frontend listens to "match-found" and bring users to coding page".
         io.to(doc.roomID).emit("match-found", {
-            roommates: roommateIds
+            roommates: [username, doc.username]
         });
     }
 }
@@ -68,7 +66,7 @@ async function disconnect_match(socket, io, message) {
 }
 
 export function createListeners(socket, io) {
-    socket.on('find-match', async(difficulty) => await findMatch(difficulty, socket, io));
+    socket.on('find-match', async(difficulty, username) => await findMatch(difficulty, socket, io, username));
     socket.on('send-chat-message', async(message) => await sendChatMessage(socket, io, message));
     socket.on('send-message', async (message) => await sendMessage(socket, io, message));
     socket.on('disconnect-match', async (message) => await disconnect_match(socket, io, message));

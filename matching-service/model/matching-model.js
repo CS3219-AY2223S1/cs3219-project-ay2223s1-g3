@@ -26,6 +26,10 @@ let MatchingModelSchema = new Schema({
     matched: {
         type: Boolean,
         required: true,
+    },
+    username: {
+        type: String,
+        required: true,
     }
 })
 
