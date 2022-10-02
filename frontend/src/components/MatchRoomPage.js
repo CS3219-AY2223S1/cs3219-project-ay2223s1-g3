@@ -12,7 +12,9 @@ function MatchRoomPage({ socket }) {
 
 	const handleLeaveChat = () => {
 		socket.emit('disconnect-match', user);
-		navigate("/home");
+		navigate("/home", { state: {
+			username: location.state.username
+		}});
 
 		// browser refresh to reset socket. causes a stupid ass bug in popupchat.js if not here.
 		navigate(0);
@@ -31,7 +33,9 @@ function MatchRoomPage({ socket }) {
 			socket.emit('disconnect-event', user);
 			console.log(message.user + "/disconnected");
 			//navigate(-1);
-			navigate("/home");
+			navigate("/home", { state: {
+				username: location.state.username
+			}});
 
 			// browser refresh to reset socket. causes a stupid ass bug in popupchat.js if not here.
 			navigate(0);

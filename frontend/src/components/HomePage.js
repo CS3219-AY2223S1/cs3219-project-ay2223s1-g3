@@ -28,7 +28,7 @@ function HomePage({socket}) {
 		if (location.state != null && location.state.username != null) {
 			username = location.state.username;
 		}
-	}, [])
+	})
 
 	useEffect(() => {
 		socket.on('match-found', message => {
@@ -85,6 +85,7 @@ function HomePage({socket}) {
 				question = res
 			}
 			navigate("/room", { state: {
+				username: username,
 				question: question,
 				difficultyLevel: difficultyLevel,
 				roommates: roommates
