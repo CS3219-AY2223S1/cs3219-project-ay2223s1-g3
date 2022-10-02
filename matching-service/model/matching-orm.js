@@ -1,7 +1,7 @@
 import { createMatch, findMatchAndUpdate, deleteMatches, findMatchDocument } from "./repository.js";
 import MatchModel from "./matching-model.js";
 
-export async function ormCreateMatch(socketID, roomID, chatRoomID, difficulty, matched) {
+export async function ormCreateMatch(socketID, roomID, chatRoomID, difficulty, matched, username) {
   try {
     console.log("socketID", socketID);
     const newMatch = await createMatch({
@@ -10,6 +10,7 @@ export async function ormCreateMatch(socketID, roomID, chatRoomID, difficulty, m
       chatRoomID,
       difficulty,
       matched,
+      username,
     });
     newMatch.save();
     return true;

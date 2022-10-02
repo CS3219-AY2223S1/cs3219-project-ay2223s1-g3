@@ -8,7 +8,7 @@ import {
 	Select,
 	Typography
 } from "@mui/material";
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 
 
 function HomePage({socket}) {
@@ -17,10 +17,18 @@ function HomePage({socket}) {
 	const [loadingComment, setLoadingComment] = useState("");
 	const [timer, setTimer] = useState(-1);
 
+	let navigate = useNavigate();
+	let location = useLocation();
+
 	const question_service_url = "http://localhost:8002/"
 	const match_timeout = 30
+	let username = "daemon";
 
-	let navigate = useNavigate();
+	useEffect(() => {
+		if (location.state != null && location.state.username != null) {
+			username = location.state.username;
+		}
+	}, [])
 
 	useEffect(() => {
 		socket.on('match-found', message => {
@@ -41,7 +49,7 @@ function HomePage({socket}) {
 		setLoadingComment("Finding match...");
 
 		// Socket connections are disconnected on page refresh and that is the expected behavior across browsers.
-		socket.emit('find-match', difficultyLevel);
+		socket.emit('find-match', difficultyLevel, username);
 		setTimer(match_timeout) // triggers useEffect
 	}
 
