@@ -66,7 +66,13 @@ function HomePage({socket}) {
 		setTimer(-1);
 		setLoadingComment("Fetching question...");
 
-		fetch(question_service_url + difficultyLevel)
+		fetch(question_service_url + difficultyLevel, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(roommates),
+		})
 		.then(res => {
 			if (!res.ok) {
 				return Promise.reject(res)

@@ -30,16 +30,68 @@ const hards = [
     {title: 'Reverse Nodes in k-Group', description: 'Given the head of a linked list, reverse the nodes of the list k at a time, and return the modified list. \n k is a positive integer and is less than or equal to the length of the linked list. If the number of nodes is not a multiple of k then left-out nodes, in the end, should remain as it is. \n You may not alter the values in the list\'s nodes, only nodes themselves may be changed.'}
 ];
 
-app.get('/easy', (req, res) => {
-    res.json(easys[Math.floor(Math.random()*easys.length)]);
+let userToQn = new Map();
+
+/**
+ * Gets qn num from userToQn map if user mapping exists, and then deletes all the users' entries for a one time match.
+ * @param {*} prefix
+ * @param {*} users
+ * @returns qnNum
+ */
+function getQnNum(prefix, users) {
+    let qnNum = -1;
+    for (var i = 0; i < users.length; i++) {
+        if (userToQn.has(prefix + users[i])) {
+            qnNum = userToQn.get(prefix + users[i]);
+            break;
+        }
+    }
+    if (qnNum !== -1) {
+        for (var i = 0; i < users.length; i++) {
+            userToQn.delete(prefix + users[i]);
+        }
+    }
+    return qnNum;
+}
+
+function setQnNum(prefix, users, qnNum) {
+    for (var i = 0; i < users.length; i++) {
+        userToQn.set(prefix + users[i], qnNum);
+    }
+}
+
+/**
+ * Get qn num if exists, otherwise sets it with a random qn num
+ * @param {*} input
+ * @param {*} prefix
+ * @param {*} list
+ * @returns qn num
+ */
+function getOrSetQnNum(input, prefix, list) {
+    let qnNum = Math.floor(Math.random()*list.length);
+    if (input) {
+        let mapQnNum = getQnNum(prefix, input);
+        if (mapQnNum !== -1) {
+            return list[mapQnNum];
+        }
+    }
+    setQnNum(prefix, input, qnNum);
+    return list[qnNum];
+}
+
+app.post('/easy', (req, res) => {
+    const prefix = '/easy';
+    res.json(getOrSetQnNum(req.body, prefix, easys));
 });
 
-app.get('/medium', (req, res) => {
-    res.json(mediums[Math.floor(Math.random()*mediums.length)]);
+app.post('/medium', (req, res) => {
+    const prefix = '/medium';
+    res.json(getOrSetQnNum(req.body, prefix, mediums));
 });
 
-app.get('/hard', (req, res) => {
-    res.json(hards[Math.floor(Math.random()*hards.length)]);
+app.post('/hard', (req, res) => {
+    const prefix = '/hard';
+    res.json(getOrSetQnNum(req.body, prefix, hards));
 });
 
 const httpServer = createServer(app)
