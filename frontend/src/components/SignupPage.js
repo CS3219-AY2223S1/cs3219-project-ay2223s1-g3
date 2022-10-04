@@ -25,6 +25,7 @@ function SignupPage() {
     const [dialogTitle, setDialogTitle] = useState("")
     const [dialogMsg, setDialogMsg] = useState("")
     const [isSignupSuccess, setIsSignupSuccess] = useState(false)
+    const [isValidPassword, setIsValidPassword] = useState(true);
 
     let location = useLocation();
 
@@ -32,6 +33,10 @@ function SignupPage() {
         setIsSignupSuccess(false)
         if (password !== confirmPassword) {
             setErrorDialog("Passwords do not match")
+            return;
+        }
+        if (!isValidPassword) {
+            setErrorDialog("Invalid password")
             return;
         }
         const res = await axios.post(URL_USER_SVC, { username, password })
@@ -46,6 +51,11 @@ function SignupPage() {
             setSuccessDialog('Account successfully created')
             setIsSignupSuccess(true)
         }
+    }
+
+    const handlePasswordChange = (e) => {
+        setPassword(e.target.value);
+        setIsValidPassword(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&£]{8,}$/.test(e.target.value));
     }
 
     const handleResetPassword = async () => {
@@ -98,9 +108,14 @@ function SignupPage() {
                         variant="standard"
                         type="password"
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        sx={{ marginBottom: "2rem" }}
+                        onChange={(e) => handlePasswordChange(e)}
+                        sx={{ marginBottom: "0.5rem" }}
+                        error={!isValidPassword}
+                    // inputProps={{ class pattern: '^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$' }}
                     />
+                    <Typography fontSize={12}><b>• At least 8 characters</b></Typography>
+                    <Typography fontSize={12} ><b>• At least one letter and one number</b></Typography>
+                    <Typography fontSize={12} marginBottom={"1rem"}><b>• At least one special character</b></Typography>
                     <TextField
                         label="Confirm Password"
                         variant="standard"
