@@ -23,7 +23,10 @@ export async function getQuestion(difficultyLevel, roommates, questionsDone) {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(roommates),
+    body: JSON.stringify({
+      roommates: roommates,
+      questionsDone: questionsDone
+    }),
   })
   .then(res => {
     if (!res.ok) {

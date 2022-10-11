@@ -60,15 +60,29 @@ function setQnNum(prefix, users, qnNum) {
     }
 }
 
+function getRandomUndoneQnNum(listLen, questionsDone) {
+    if (!questionsDone || questionsDone.length == 0) {
+        return Math.floor(Math.random()*listLen);
+    }
+    const listNums = [...Array(listLen).keys()];
+    const doneNums = new Set(questionsDone);
+    const undoneNums = Array.from(listNums).filter(item => !doneNums.has(item));
+    if (undoneNums.length == 0) {
+        return Math.floor(Math.random()*listLen);
+    }
+    return undoneNums[Math.floor(Math.random()*undoneNums.length)];
+}
+
 /**
  * Get qn num if exists, otherwise sets it with a random qn num, and then returns the qn using the qn num
  * @param {*} input
  * @param {*} prefix
  * @param {*} list
+ * @param {*} questionsDone
  * @returns qn num
  */
-function getOrSetQn(input, prefix, list) {
-    let qnNum = Math.floor(Math.random()*list.length);
+function getOrSetQn(input, prefix, list, questionsDone) {
+    let qnNum = getRandomUndoneQnNum(list.length, questionsDone);
     if (input && Array.isArray(input) && input.every(i => typeof i === "string")) {
         let mapQnNum = getQnNum(prefix, input);
         if (mapQnNum !== -1) {
@@ -81,17 +95,17 @@ function getOrSetQn(input, prefix, list) {
 
 app.post('/easy', (req, res) => {
     const prefix = '/easy';
-    res.json(getOrSetQn(req.body, prefix, easys));
+    res.json(getOrSetQn(req.body.roommates, prefix, easys, req.body.questionsDone));
 });
 
 app.post('/medium', (req, res) => {
     const prefix = '/medium';
-    res.json(getOrSetQn(req.body, prefix, mediums));
+    res.json(getOrSetQn(req.body.roommates, prefix, mediums, req.body.questionsDone));
 });
 
 app.post('/hard', (req, res) => {
     const prefix = '/hard';
-    res.json(getOrSetQn(req.body, prefix, hards));
+    res.json(getOrSetQn(req.body.roommates, prefix, hards, req.body.questionsDone));
 });
 
 const httpServer = createServer(app)

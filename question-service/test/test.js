@@ -10,7 +10,10 @@ describe('question-service', () => {
   it('should return same easy qn with same input', (done) => {
     chai.request(app).post('/easy')
     .set('content-type', 'application/json')
-    .send(['user1', 'user2'])
+    .send({
+      roommates: ['user1', 'user2'],
+      questionsDone: []
+    })
     .end((err, res) => {
       res.should.have.status(200)
       res.body.should.be.deep.oneOf(easys)
@@ -18,7 +21,10 @@ describe('question-service', () => {
 
       chai.request(app).post('/easy')
       .set('content-type', 'application/json')
-      .send(['user2', 'user1'])
+      .send({
+        roommates: ['user1', 'user2'],
+        questionsDone: []
+      })
       .end((err, res) => {
         res.should.have.status(200)
         res.body.should.be.eql(firstRes)
@@ -31,7 +37,10 @@ describe('question-service', () => {
   it('should return same medium qn with same input', (done) => {
     chai.request(app).post('/medium')
     .set('content-type', 'application/json')
-    .send(['user1', 'user2'])
+    .send({
+      roommates: ['user1', 'user2'],
+      questionsDone: []
+    })
     .end((err, res) => {
       res.should.have.status(200)
       res.body.should.be.deep.oneOf(mediums)
@@ -39,7 +48,10 @@ describe('question-service', () => {
 
       chai.request(app).post('/medium')
       .set('content-type', 'application/json')
-      .send(['user1', 'user2'])
+      .send({
+        roommates: ['user2', 'user1'],
+        questionsDone: []
+      })
       .end((err, res) => {
         res.should.have.status(200)
         res.body.should.be.eql(firstRes)
@@ -52,7 +64,10 @@ describe('question-service', () => {
   it('should return same hard qn with same input', (done) => {
     chai.request(app).post('/hard')
     .set('content-type', 'application/json')
-    .send(['user1', 'user2'])
+    .send({
+      roommates: ['user1', 'user2'],
+      questionsDone: []
+    })
     .end((err, res) => {
       res.should.have.status(200)
       res.body.should.be.deep.oneOf(hards)
@@ -60,7 +75,10 @@ describe('question-service', () => {
 
       chai.request(app).post('/hard')
       .set('content-type', 'application/json')
-      .send(['user2', 'user1'])
+      .send({
+        roommates: ['user2', 'user1'],
+        questionsDone: []
+      })
       .end((err, res) => {
         res.should.have.status(200)
         res.body.should.be.eql(firstRes)
@@ -74,7 +92,10 @@ describe('question-service', () => {
     // room 1
     chai.request(app).post('/easy')
     .set('content-type', 'application/json')
-    .send(['user1', 'user2'])
+    .send({
+      roommates: ['user1', 'user2'],
+      questionsDone: []
+    })
     .end((err, res) => {
       res.should.have.status(200)
       res.body.should.be.deep.oneOf(easys)
@@ -82,7 +103,10 @@ describe('question-service', () => {
       // room 1
       chai.request(app).post('/easy')
       .set('content-type', 'application/json')
-      .send(['user2', 'user1'])
+      .send({
+        roommates: ['user1', 'user2'],
+        questionsDone: []
+      })
       .end((err, res) => {
         res.should.have.status(200)
         res.body.should.be.eql(firstRes)
@@ -92,7 +116,10 @@ describe('question-service', () => {
     // room 2
     chai.request(app).post('/easy')
     .set('content-type', 'application/json')
-    .send(['user3', 'user4'])
+    .send({
+      roommates: ['user3', 'user4'],
+      questionsDone: []
+    })
     .end((err, res) => {
       res.should.have.status(200)
       res.body.should.be.deep.oneOf(easys)
@@ -100,7 +127,10 @@ describe('question-service', () => {
       // room 2
       chai.request(app).post('/easy')
       .set('content-type', 'application/json')
-      .send(['user3', 'user4'])
+      .send({
+        roommates: ['user3', 'user4'],
+        questionsDone: []
+      })
       .end((err, res) => {
         res.should.have.status(200)
         res.body.should.be.eql(secondRes)
@@ -111,7 +141,10 @@ describe('question-service', () => {
     // room 3
     chai.request(app).post('/hard')
     .set('content-type', 'application/json')
-    .send(['user5', 'user6'])
+    .send({
+      roommates: ['user5', 'user6'],
+      questionsDone: []
+    })
     .end((err, res) => {
       res.should.have.status(200)
       res.body.should.be.deep.oneOf(hards)
@@ -119,11 +152,57 @@ describe('question-service', () => {
       // room 3
       chai.request(app).post('/hard')
       .set('content-type', 'application/json')
-      .send(['user6', 'user5'])
+      .send({
+        roommates: ['user6', 'user5'],
+        questionsDone: []
+      })
       .end((err, res) => {
         res.should.have.status(200)
         res.body.should.be.eql(thirdRes)
       })
     })
   })
+
+  it('should return undone easy qn', (done) => {
+    chai.request(app).post('/easy')
+    .set('content-type', 'application/json')
+    .send({
+      roommates: ['user1', 'user2'],
+      questionsDone: [1, 2, 0]
+    })
+    .end((err, res) => {
+      res.should.have.status(200)
+      res.body.should.be.deep.oneOf(easys)
+      done();
+    })
+  })
+
+  it('should return undone medium qn', (done) => {
+    chai.request(app).post('/medium')
+    .set('content-type', 'application/json')
+    .send({
+      roommates: ['user1', 'user2'],
+      questionsDone: [0, 1]
+    })
+    .end((err, res) => {
+      res.should.have.status(200)
+      res.body.should.be.deep.oneOf(mediums.slice(2))
+      done();
+    })
+  })
+
+  it('should return undone hard qn', (done) => {
+    chai.request(app).post('/hard')
+    .set('content-type', 'application/json')
+    .send({
+      roommates: ['user1', 'user2'],
+      questionsDone: [1]
+    })
+    .end((err, res) => {
+      res.should.have.status(200)
+      res.body.should.be.deep.oneOf(hards.filter((v, i) => i !== 1))
+      done();
+    })
+  })
+
 })
