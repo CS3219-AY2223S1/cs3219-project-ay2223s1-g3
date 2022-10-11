@@ -4,13 +4,13 @@ const questionSchema = new Schema({
   question: {
     type: Number,
     required: true,
-    // get: v => Math.round(v),
-    // set: v => Math.round(v),
+    get: v => Math.round(v),
+    set: v => Math.round(v),
   },
   difficulty: {
     type: String,
     required: true,
-    // enum: ['easy', 'medium', 'hard']
+    enum: ['Easy', 'Medium', 'Hard']
   },
   _id: false
 })
