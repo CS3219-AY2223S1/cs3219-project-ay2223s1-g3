@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom"
 import { getQuestion } from "../api/question-service"
+import { addQuestionDone, getQuestionsDone } from "../api/history-service";
 
 function HomePage({socket}) {
 	const [difficulty, setDifficulty] = useState("Easy");
@@ -58,8 +59,14 @@ function HomePage({socket}) {
 		setTimer(-1);
 		setLoadingComment("Fetching question...");
 
-    getQuestion(difficulty, roommates)
+    getQuestionsDone(location.state.username, location.state.token)
+    .then((res) =>  res.data.filter(qn => qn.difficulty == difficulty))
+    .then((res) => res.map((data) => data.question))
+    .then((res) => {
+      getQuestion(difficulty, roommates, res)
       .then((res) => {
+        addQuestionDone(location.state.username, res.num, difficulty)
+
         navigate('/room', {
           state: {
             username: location.state.username,
@@ -71,6 +78,8 @@ function HomePage({socket}) {
         });
       })
       .catch((err) => console.log(err));
+    })
+    .catch((err) => console.log(err));
 	}
 
 	const handleNoMatch = () => {

@@ -6,7 +6,18 @@ const defaultQn = {
   difficultyLevel: "hard"
 }
 
-export async function getQuestion(difficultyLevel, roommates) {
+/**
+ * Gets question for room
+ * @param {*} difficultyLevel
+ * @param {*} roommates
+ * @param {*} questionsDone
+ * @returns {
+ *  num: Number,
+ *  title: String,
+ *  title: String
+ * }
+ */
+export async function getQuestion(difficultyLevel, roommates, questionsDone) {
   return await fetch(question_service_url + difficultyLevel, {
     method: 'POST',
     headers: {
