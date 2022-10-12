@@ -17,12 +17,6 @@ export async function ormGetQuestionsDone(username, jwt) {
     //     console.log(`ERROR: Verification failed for user: ${username}`)
     //     return null
     // }
-    // // blacklisting
-    // const exp = verification.exp
-    // if (!await addToBlacklist(jwt, exp)) {
-    //     console.log(`ERROR: Unable to add user: ${username}'s JWT to redis database`)
-    //     return null
-    // }
     const questionsDone = await getQuestionsDone(username);
     return questionsDone;
   } catch (err) {
@@ -37,12 +31,6 @@ export async function ormAddQuestionDone(username, questionDone, jwt) {
     // const verification = await verifyToken(username, jwt)
     // if (!verification || verification.err) {
     //     console.log(`ERROR: Verification failed for user: ${username}`)
-    //     return false
-    // }
-    // // blacklisting
-    // const exp = verification.exp
-    // if (!await addToBlacklist(jwt, exp)) {
-    //     console.log(`ERROR: Unable to add user: ${username}'s JWT to redis database`)
     //     return false
     // }
     const exists = await historyInDb(username);
@@ -69,12 +57,6 @@ export async function ormDeleteHistory(username, jwt) {
     // const verification = await verifyToken(username, jwt)
     // if (!verification || verification.err) {
     //     console.log(`ERROR: Verification failed for user: ${username}`)
-    //     return null
-    // }
-    // // blacklisting
-    // const exp = verification.exp
-    // if (!await addToBlacklist(jwt, exp)) {
-    //     console.log(`ERROR: Unable to add user: ${username}'s JWT to redis database`)
     //     return null
     // }
     const success = await deleteHistory(username);
