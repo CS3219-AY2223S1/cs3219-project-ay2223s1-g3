@@ -37,9 +37,10 @@ function LoginPage() {
 				}
 			})
 		if (res && res.status === STATUS_CODE_CREATED) {
-			setToken(res.data.userJWT)
+			setToken(res.data.token)
 			setIsLoginSuccess(true)
-			navigate("/home", { state: { token: token, username: username } })
+			document.cookie = res.data.token;
+			navigate("/home", { state: { token: res.data.token, username: username } })
 		}
 	}
 

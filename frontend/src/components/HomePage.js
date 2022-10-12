@@ -11,7 +11,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom"
 
 
-function HomePage({socket}) {
+function HomePage({ socket }) {
 	const [difficultyLevel, setDifficultyLevel] = useState("Easy");
 	const [isLoading, setIsLoading] = useState(false);
 	const [loadingComment, setLoadingComment] = useState("");
@@ -55,7 +55,7 @@ function HomePage({socket}) {
 
 	useEffect(() => {
 		if (timer > 0) {
-			setTimeout(() => setTimer(timer-1), 1000)
+			setTimeout(() => setTimer(timer - 1), 1000)
 			setLoadingComment("Finding match... (" + timer + "s)")
 		} else if (timer === 0) {
 			handleNoMatch();
@@ -73,25 +73,27 @@ function HomePage({socket}) {
 			},
 			body: JSON.stringify(roommates),
 		})
-		.then(res => {
-			if (!res.ok) {
-				return Promise.reject(res)
-			}
-			return res.json()
-		})
-		.then(res => {
-			let question = "What is love?"
-			if (res && Object.keys(res).length !== 0) {
-				question = res
-			}
-			navigate("/room", { state: {
-				username: username,
-				question: question,
-				difficultyLevel: difficultyLevel,
-				roommates: roommates
-			} });
-		})
-		.catch(err => console.log(err))
+			.then(res => {
+				if (!res.ok) {
+					return Promise.reject(res)
+				}
+				return res.json()
+			})
+			.then(res => {
+				let question = "What is love?"
+				if (res && Object.keys(res).length !== 0) {
+					question = res
+				}
+				navigate("/room", {
+					state: {
+						username: username,
+						question: question,
+						difficultyLevel: difficultyLevel,
+						roommates: roommates
+					}
+				});
+			})
+			.catch(err => console.log(err))
 	}
 
 	const handleNoMatch = () => {
@@ -118,12 +120,12 @@ function HomePage({socket}) {
 				</Select>
 			</FormControl>
 			{isLoading ?
-			<>
-			<Button onClick={handleNoMatch} color={"warning"}>Cancel matching</Button>
-			<CircularProgress/>
-			{loadingComment}
-			</>
-			: <Button onClick={handleClick}>Let's go</Button>
+				<>
+					<Button onClick={handleNoMatch} color={"warning"}>Cancel matching</Button>
+					<CircularProgress />
+					{loadingComment}
+				</>
+				: <Button onClick={handleClick}>Let's go</Button>
 			}
 		</Box>
 	)
