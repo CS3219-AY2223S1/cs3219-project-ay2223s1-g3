@@ -48,7 +48,7 @@ function HomePage({socket}) {
 
 	useEffect(() => {
 		if (timer > 0) {
-			setTimeout(() => setTimer(timer-1), 1000)
+			setTimeout(() => setTimer(timer - 1), 1000)
 			setLoadingComment("Finding match... (" + timer + "s)")
 		} else if (timer === 0) {
 			handleNoMatch();
@@ -106,12 +106,12 @@ function HomePage({socket}) {
 				</Select>
 			</FormControl>
 			{isLoading ?
-			<>
-			<Button onClick={handleNoMatch} color={"warning"}>Cancel matching</Button>
-			<CircularProgress/>
-			{loadingComment}
-			</>
-			: <Button onClick={handleClick}>Let's go</Button>
+				<>
+					<Button onClick={handleNoMatch} color={"warning"}>Cancel matching</Button>
+					<CircularProgress />
+					{loadingComment}
+				</>
+				: <Button onClick={handleClick}>Let's go</Button>
 			}
 		</Box>
 	)
