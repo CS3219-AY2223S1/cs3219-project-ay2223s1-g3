@@ -11,12 +11,13 @@ export async function ormGetQuestionsDone(username, jwt) {
     if (!exists) {
       return [];
     }
-    // // authentication
-    // const verification = await verifyToken(username, jwt)
-    // if (!verification || verification.err) {
-    //     console.log(`ERROR: Verification failed for user: ${username}`)
-    //     return null
-    // }
+    // authentication
+    const verification = await verifyToken(username, jwt)
+    if (!verification || verification.err) {
+      console.log(verification)
+        console.log(`ERROR: Verification failed for user: ${username}`)
+        return null
+    }
     const questionsDone = await getQuestionsDone(username);
     return questionsDone;
   } catch (err) {
@@ -27,12 +28,12 @@ export async function ormGetQuestionsDone(username, jwt) {
 
 export async function ormAddQuestionDone(username, questionDone, jwt) {
   try {
-    // // authentication
-    // const verification = await verifyToken(username, jwt)
-    // if (!verification || verification.err) {
-    //     console.log(`ERROR: Verification failed for user: ${username}`)
-    //     return false
-    // }
+    // authentication
+    const verification = await verifyToken(username, jwt)
+    if (!verification || verification.err) {
+        console.log(`ERROR: Verification failed for user: ${username}`)
+        return false
+    }
     const exists = await historyInDb(username);
     if (!exists) {
       let newHistory = await createHistory(username, [questionDone]);

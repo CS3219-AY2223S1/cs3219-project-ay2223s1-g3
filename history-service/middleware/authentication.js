@@ -28,5 +28,5 @@ export async function verifyToken(username, token) {
     } catch (err) {
         console.log(`ERROR: Unable to verify JWT for ${username}`)
         return { err }
-    } 
+    }
 }

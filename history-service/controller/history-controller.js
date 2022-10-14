@@ -6,7 +6,7 @@ export async function getQuestionsDone(req, res) {
   try {
     const { username } = req.body;
     if (username) {
-      const resp = await _getQuestionsDone(username, req.session.token);
+      const resp = await _getQuestionsDone(username, req.headers.cookie);
       if (!resp || resp.err) {
         console.log(`Unable to retrieve user: ${username}`);
         return res.status(400).json({ message: `Unable to retrieve user: ${username}` });
@@ -26,7 +26,7 @@ export async function addQuestionDone(req, res) {
   try {
     const { username, questionDone } = req.body;
     if (username && questionDone) {
-      const resp = await _addQuestionDone(username, questionDone, req.session.token);
+      const resp = await _addQuestionDone(username, questionDone, req.headers.cookie);
       const jsonQuestionsDone = JSON.stringify(questionDone);
       if (!resp || resp.err) {
         console.log(`Unable to add question: ${username}, ${jsonQuestionsDone}`);
@@ -47,7 +47,7 @@ export async function deleteHistory(req, res) {
   try {
     const { username } = req.body;
     if (username) {
-      const resp = await _deleteHistory(username, req.session.token);
+      const resp = await _deleteHistory(username, req.headers.cookie);
       if (!resp || resp.err) {
         console.log(`Unable to delete history: ${username}`);
         return res.status(400).json({ message: `Unable to delete history: ${username}` });

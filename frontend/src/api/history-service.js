@@ -16,6 +16,7 @@ export async function getQuestionsDone(username, token) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ username: username, token: token }),
+    credentials: 'include',
   })
     .then((res) => {
       if (!res.ok) {
@@ -42,7 +43,12 @@ export async function addQuestionDone(username, questionNum, difficulty, token) 
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ username: username, questionDone: { question: questionNum, difficulty: difficulty }, token: token }),
+    body: JSON.stringify({
+      username: username,
+      questionDone: { question: questionNum, difficulty: difficulty },
+      token: token,
+    }),
+    credentials: "include",
   })
     .then((res) => {
       if (!res.ok) {

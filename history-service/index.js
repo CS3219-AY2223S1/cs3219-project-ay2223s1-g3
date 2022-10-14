@@ -5,20 +5,10 @@ import 'dotenv/config';
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors()); // config cors so that front-end can use
+app.use(cors({credentials: true, origin: 'http://localhost:3000'})); // config cors so that front-end can use
 app.options('*', cors());
 
 import { getQuestionsDone, addQuestionDone, deleteHistory } from './controller/history-controller.js';
-import cookieSession from 'cookie-session';
-
-// cookie
-app.use(
-  cookieSession({
-    name: 'cs3219-project-session',
-    secret: process.env.COOKIE_SECRET,
-    httpOnly: true,
-  })
-);
 
 const router = express.Router();
 
