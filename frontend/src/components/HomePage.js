@@ -58,7 +58,7 @@ function HomePage({socket}) {
 	const handleMatch = (roommates) => {
 		setTimer(-1);
 		setLoadingComment("Fetching question...");
-    getQuestionsDone(location.state.username, location.state.token)
+    getQuestionsDone(location.state.username)
     .then((res) =>  res.data.filter(qn => qn.difficulty == difficulty))
     .then((res) => res.map((data) => data.question))
     .then((res) => {

@@ -9,13 +9,13 @@ const history_service_url = 'http://localhost:8003/api/history/';
  *  data: [{ question: Number, difficulty: String }]
  * }
  */
-export async function getQuestionsDone(username, token) {
+export async function getQuestionsDone(username) {
   return await fetch(history_service_url + 'getQuestionsDone', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ username: username, token: token }),
+    body: JSON.stringify({ username: username }),
     credentials: 'include',
   })
     .then((res) => {
@@ -37,7 +37,7 @@ export async function getQuestionsDone(username, token) {
  *  message: String
  * }
  */
-export async function addQuestionDone(username, questionNum, difficulty, token) {
+export async function addQuestionDone(username, questionNum, difficulty) {
   return await fetch(history_service_url + 'addQuestionDone', {
     method: 'POST',
     headers: {
@@ -46,7 +46,6 @@ export async function addQuestionDone(username, questionNum, difficulty, token) 
     body: JSON.stringify({
       username: username,
       questionDone: { question: questionNum, difficulty: difficulty },
-      token: token,
     }),
     credentials: "include",
   })
