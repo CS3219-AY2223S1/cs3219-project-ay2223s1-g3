@@ -69,10 +69,10 @@ function MatchRoomPage({ socket }) {
 					<Box display={"flex"} justifyContent={"space-between"} alignItems={"baseline"}>
 						<Typography variant={"h5"} marginBottom={"1rem"} fontWeight="bold">{location.state.question.title}</Typography>
 						<Typography
-							color={location.state.difficultyLevel === "Hard" ? "red" : location.state.difficultyLevel === "Medium" ? "orange" : "green"}
+							color={location.state.difficulty === "Hard" ? "red" : location.state.difficulty === "Medium" ? "orange" : "green"}
 							variant={"body1"}
 							marginBottom={"1rem"}>
-							<b>{location.state.difficultyLevel}</b>
+							<b>{location.state.difficulty}</b>
 						</Typography>
 					</Box>
 					<Divider />

@@ -9,10 +9,11 @@ import {
 	Typography
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom"
+import { getQuestion } from "../api/question-service"
+import { addQuestionDone, getQuestionsDone } from "../api/history-service";
 
-
-function HomePage({ socket }) {
-	const [difficultyLevel, setDifficultyLevel] = useState("Easy");
+function HomePage({socket}) {
+	const [difficulty, setDifficulty] = useState("Easy");
 	const [isLoading, setIsLoading] = useState(false);
 	const [loadingComment, setLoadingComment] = useState("");
 	const [timer, setTimer] = useState(-1);
@@ -20,15 +21,7 @@ function HomePage({ socket }) {
 	let navigate = useNavigate();
 	let location = useLocation();
 
-	const question_service_url = "http://localhost:8002/"
 	const match_timeout = 30
-	let username = "daemon";
-
-	useEffect(() => {
-		if (location.state != null && location.state.username != null) {
-			username = location.state.username;
-		}
-	})
 
 	useEffect(() => {
 		socket.on('match-found', message => {
@@ -38,10 +31,10 @@ function HomePage({ socket }) {
 		return () => {
 			socket.off('match-found');
 		}
-	}, [difficultyLevel])
+	}, [difficulty])
 
 	const handleChange = (event) => {
-		setDifficultyLevel(event.target.value);
+		setDifficulty(event.target.value);
 	}
 
 	const handleClick = () => {
@@ -49,7 +42,7 @@ function HomePage({ socket }) {
 		setLoadingComment("Finding match...");
 
 		// Socket connections are disconnected on page refresh and that is the expected behavior across browsers.
-		socket.emit('find-match', difficultyLevel, username);
+		socket.emit('find-match', difficulty, location.state.username);
 		setTimer(match_timeout) // triggers useEffect
 	}
 
@@ -65,35 +58,27 @@ function HomePage({ socket }) {
 	const handleMatch = (roommates) => {
 		setTimer(-1);
 		setLoadingComment("Fetching question...");
+    getQuestionsDone(location.state.username)
+    .then((res) =>  res.data.filter(qn => qn.difficulty == difficulty))
+    .then((res) => res.map((data) => data.question))
+    .then((res) => {
+      getQuestion(difficulty, roommates, res)
+      .then((res) => {
+        addQuestionDone(location.state.username, res.num, difficulty)
 
-		fetch(question_service_url + difficultyLevel, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(roommates),
-		})
-			.then(res => {
-				if (!res.ok) {
-					return Promise.reject(res)
-				}
-				return res.json()
-			})
-			.then(res => {
-				let question = "What is love?"
-				if (res && Object.keys(res).length !== 0) {
-					question = res
-				}
-				navigate("/room", {
-					state: {
-						username: username,
-						question: question,
-						difficultyLevel: difficultyLevel,
-						roommates: roommates
-					}
-				});
-			})
-			.catch(err => console.log(err))
+        navigate('/room', {
+          state: {
+            username: location.state.username,
+            question: res,
+            difficulty: difficulty,
+            roommates: roommates,
+            token: location.state.token,
+          },
+        });
+      })
+      .catch((err) => console.log(err));
+    })
+    .catch((err) => console.log(err));
 	}
 
 	const handleNoMatch = () => {
@@ -110,7 +95,7 @@ function HomePage({ socket }) {
 				<Select
 					labelId="select-label"
 					id="difficulty-select"
-					value={difficultyLevel}
+					value={difficulty}
 					onChange={handleChange}
 					size="medium"
 				>
