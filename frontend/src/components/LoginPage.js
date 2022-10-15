@@ -10,11 +10,12 @@ import {
 	TextField,
 	Typography
 } from "@mui/material";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import { UserContext } from "./UserContext";
 
 function LoginPage() {
 	const [username, setUsername] = useState("")
@@ -25,6 +26,8 @@ function LoginPage() {
 	const [isLoginSuccess, setIsLoginSuccess] = useState(false)
 	const [token, setToken] = useState("")
 	const navigate = useNavigate();
+
+	const { isLoggedIn, setIsLoggedIn } = useContext(UserContext);
 
 	const handleLogin = async () => {
 		setIsLoginSuccess(false)
@@ -37,6 +40,7 @@ function LoginPage() {
 				}
 			})
 		if (res && res.status === STATUS_CODE_CREATED) {
+			setIsLoggedIn(true);
 			setToken(res.data.token)
 			setIsLoginSuccess(true)
 			document.cookie = res.data.token;

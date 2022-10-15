@@ -1,10 +1,12 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import React, { createContext, useContext, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate, redirect } from "react-router-dom";
 import SignupPage from './components/SignupPage';
 import LoginPage from './components/LoginPage';
 import MatchRoomPage from './components/MatchRoomPage';
 import { Box, createTheme, ThemeProvider } from "@mui/material";
 import HomePage from "./components/HomePage";
 import socketIO from "socket.io-client"
+import { UserContext } from "./components/UserContext";
 
 const theme = createTheme({
     typography: {
@@ -24,24 +26,37 @@ const socket = socketIO.connect("http://localhost:8001")
 socket.on('connection', () => {
 })
 
-function App() {
-    return (
-        <ThemeProvider theme={theme}>
-            <div className="App">
-                <Box display={"flex"} flexDirection={"column"} height="100vh">
-                    <Router>
-                        <Routes>
-                            <Route exact path="/" element={<Navigate replace to="/login" />}></Route>
-                            <Route path="/login" element={<LoginPage />} />
-                            <Route path="/signup" element={<SignupPage />} />
-                            <Route path="/home" element={<HomePage socket={socket} />} />
-                            <Route path="/room" element={<MatchRoomPage socket={socket} />} />
-                        </Routes>
-                    </Router>
-                </Box>
-            </div>
 
-        </ThemeProvider>
+function App() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const ProtectedRoute = ({ children }) => {
+        console.log(useContext(UserContext).isLoggedIn);
+        if (!isLoggedIn) {
+            return <Navigate to="/" />;
+        }
+        return children;
+    }
+    return (
+        <UserContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+            <ThemeProvider theme={theme}>
+                <div className="App">
+                    <Box display={"flex"} flexDirection={"column"} height="100vh">
+                        <Router>
+                            <Routes>
+                                <Route exact path="/" element={<Navigate replace to="/login" />}></Route>
+                                <Route path="/login" element={<LoginPage />} />
+                                <Route path="/signup" element={<SignupPage />} />
+                                <Route path="/home" element={<ProtectedRoute><HomePage socket={socket} /> </ProtectedRoute>} />
+                                <Route path="/room" element={<ProtectedRoute><MatchRoomPage socket={socket} /></ProtectedRoute>} />
+                            </Routes>
+                        </Router>
+                    </Box>
+                </div>
+
+            </ThemeProvider>
+
+        </UserContext.Provider>
     );
 }
 
