@@ -32,7 +32,6 @@ export async function ormLoginUser(username, password) {
             return null
         }
         const jwt = await signToken(username)
-        user.save()
         return jwt
     } catch (err) {
         console.log(`ERROR: Could not retrieve user: ${username}`)

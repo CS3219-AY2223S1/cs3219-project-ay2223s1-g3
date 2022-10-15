@@ -42,8 +42,7 @@ export async function loginUser(req, res) {
                 return res.status(400).json({ message: `Unable to retrieve user: ${username}` })
             }
             console.log(`User ${username} logged in successfully!`)
-            req.session.token = resp
-            return res.status(201).json({ message: 'Login successful!', token: req.session.token })
+            return res.status(201).json({ message: 'Login successful!', token: resp })
         } else {
             return res.status(400).json({ message: 'Username and/or Password are missing!' });
         }
@@ -57,7 +56,7 @@ export async function logoutUser(req, res) {
     try {
         const { username } = req.body
         if (username) {
-            const resp = await _logoutUser(username, req.session.token)
+            const resp = await _logoutUser(username, req.headers.cookie)
             if (!resp) {
                 console.log('User does not exist!')
                 return res.status(400).json({ message: 'User does not exist!' })
@@ -81,7 +80,7 @@ export async function deleteUser(req, res) {
     try {
         const { username, password } = req.body
         if (username && password) {
-            const resp = await _deleteUser(username, password, req.session.token)
+            const resp = await _deleteUser(username, password, req.headers.cookie)
             if (!resp) {
                 console.log('Unable to delete account. Please check your password!')
                 return res.status(400).json({ message: 'Unable to delete account. Please check your password!' })
@@ -105,7 +104,7 @@ export async function pwChange(req, res) {
     try {
         const { username, oldPw, newPw } = req.body
         if (username && oldPw && newPw) {
-            const resp = await _pwChange(username, oldPw, newPw, req.session.token)
+            const resp = await _pwChange(username, oldPw, newPw, req.headers.cookie)
             if (!resp) {
                 console.log('Unable to change your password. Please check your old password!')
                 return res.status(400).json({ message: 'Unable to change your password. Please check your old password!' })
