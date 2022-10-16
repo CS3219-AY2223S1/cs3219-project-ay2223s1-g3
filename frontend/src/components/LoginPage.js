@@ -40,6 +40,7 @@ function LoginPage() {
 			})
 		if (res && res.status === STATUS_CODE_CREATED) {
 			setIsLoggedInToken(res.data.token);
+			window.localStorage.setItem("jwt_token", res.data.token);
 			setIsLoginSuccess(true)
 			document.cookie = res.data.token;
 			navigate("/home", { state: { token: res.data.token, username: username } })

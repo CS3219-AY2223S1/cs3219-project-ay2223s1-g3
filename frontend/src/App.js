@@ -13,6 +13,12 @@ const theme = createTheme({
         h4: {
             color: "#1976d2",
         },
+        h3: {
+            color: "#1976d2",
+        },
+        h5: {
+            color: "#1976d2",
+        },
         body1: {
             color: "darkgrey"
         },
@@ -29,10 +35,9 @@ socket.on('connection', () => {
 
 function App() {
     const [isLoggedInToken, setIsLoggedInToken] = useState(null);
-    console.log(isLoggedInToken)
 
     const ProtectedRoute = ({ children }) => {
-        if (!isLoggedInToken) {
+        if (!isLoggedInToken && !window.localStorage.getItem("jwt_token")) {
             return <Navigate to="/" />;
         }
         return children;
