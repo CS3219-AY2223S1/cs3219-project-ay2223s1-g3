@@ -17,13 +17,14 @@ import { addQuestionDone, getQuestionsDone } from "../api/history-service";
 import { UserContext } from "./UserContext";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
+import BackgroundImage from "../HomeScreenBackground.png"
 
 function HomePage({ socket }) {
 	const [difficulty, setDifficulty] = useState("Easy");
 	const [isLoading, setIsLoading] = useState(false);
 	const [loadingComment, setLoadingComment] = useState("");
 	const [timer, setTimer] = useState(-1);
-	const [questionHistory, setQuestionHistory] = useState([]);
+	const [questionHistory, setQuestionHistory] = useState([{ question: "Question 1", difficulty: "Easy" }, { question: "Question 2", difficulty: "Medium" }]);
 
 	let navigate = useNavigate();
 	let location = useLocation();
@@ -109,10 +110,11 @@ function HomePage({ socket }) {
 		}
 	}
 	return (
-		<Box display={"flex"} flexDirection={"column"} justifyContent={"center"} height="100vh" alignItems={"center"}>
-			<Typography variant={"h3"} marginBottom={"2rem"} fontWeight="bold">PeerPrep</Typography>
+		<Box display={"flex"} flexDirection={"column"} justifyContent={"center"} height="100vh" alignItems={"center"} style={{ backgroundImage: `url(${BackgroundImage})`, backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundPosition: " center center" }}>
+			<Button variant="contained" style={{ position: "absolute", top: "20px", right: "20px" }} onClick={() => handleLogout()} color={"warning"}><b>Logout</b></Button>
+			<Typography variant={"h3"} marginBottom={"3rem"} fontWeight="bold">PeerPrep</Typography>
 			<Typography variant={"body1"} fontWeight="bold">Select difficulty level</Typography>
-			<FormControl sx={{ m: 1, minWidth: 300 }}>
+			<FormControl sx={{ m: 2, minWidth: 300 }}>
 				<Select
 					labelId="select-label"
 					id="difficulty-select"
@@ -132,29 +134,34 @@ function HomePage({ socket }) {
 						<CircularProgress />
 						{loadingComment}
 					</>
-					: <Button variant="contained" style={{ width: "200px" }} onClick={handleClick}><b>Let's go</b></Button>
+					: <Button variant="contained" style={{ width: "300px", borderRadius: "8px", padding: "10px", marginBottom: "5rem" }} onClick={handleClick}><b>Let's go</b></Button>
 			}
-			<Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
-				Text only
-			</Typography>
-			<List >
-				{questionHistory.map(item => {
-					return (
-						<>
-							<ListItem style={{ width: "300px", display: "flex", justifyContent: "space-between" }}>
-								<div>
-									{item.question}
-								</div>
-								<div>
-									{item.difficulty}
-								</div>
-							</ListItem>
-							<Divider />
-						</>
-					)
-				})}
-			</List>
-			<Button onClick={() => handleLogout()} color={"warning"}>Logout</Button>
+			<div style={{ display: "flex", flexDirection: "column", border: "solid 1px #1976d2", borderRadius: "14px", minWidth: "600px", minHeight: "400px" }}>
+				<Typography variant="h5" component="div" style={{ color: "white", backgroundColor: "#1976d2", borderRadius: "11px 11px 0px 0px", height: "40px", padding: "14px" }}>
+					Attempted Questions
+				</Typography>
+				<div style={{ display: "flex", flexDirection: "column" }}>
+					{questionHistory.length === 0 ? <Typography style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "150px" }}>No attempts yet!</Typography> : <List >
+						{questionHistory.map(item => {
+							return (
+								<>
+									<ListItem style={{ width: "600px", display: "flex", justifyContent: "space-between", marginTop: "15px" }}>
+										<div>
+											{item.question}
+										</div>
+										<div>
+											<Typography color={item.difficulty === "Hard" ? "red" : item.difficulty === "Medium" ? "orange" : "green"}>
+												<b>{item.difficulty}</b>
+											</Typography>
+										</div>
+									</ListItem>
+									<Divider style={{ marginTop: "15px" }} />
+								</>
+							)
+						})}
+					</List>}
+				</div>
+			</div>
 		</Box >
 	)
 

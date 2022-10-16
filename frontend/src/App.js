@@ -13,6 +13,12 @@ const theme = createTheme({
         h4: {
             color: "#1976d2",
         },
+        h3: {
+            color: "#1976d2",
+        },
+        h5: {
+            color: "#1976d2",
+        },
         body1: {
             color: "darkgrey"
         },
