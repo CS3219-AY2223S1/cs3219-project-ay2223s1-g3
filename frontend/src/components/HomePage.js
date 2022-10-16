@@ -27,7 +27,7 @@ function HomePage({ socket }) {
 
 	let navigate = useNavigate();
 	let location = useLocation();
-	const { setIsLoggedIn } = useContext(UserContext);
+	const { setIsLoggedInToken } = useContext(UserContext);
 
 	const match_timeout = 30
 
@@ -104,7 +104,7 @@ function HomePage({ socket }) {
 		const res = await axios.post(URL_USER_SVC + "/logout", { username }, { withCredentials: true })
 
 		if (res) {
-			setIsLoggedIn(false);
+			setIsLoggedInToken(null);
 			navigate("/login");
 		}
 	}

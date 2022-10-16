@@ -24,10 +24,9 @@ function LoginPage() {
 	const [dialogTitle, setDialogTitle] = useState("")
 	const [dialogMsg, setDialogMsg] = useState("")
 	const [isLoginSuccess, setIsLoginSuccess] = useState(false)
-	const [token, setToken] = useState("")
 	const navigate = useNavigate();
 
-	const { isLoggedIn, setIsLoggedIn } = useContext(UserContext);
+	const { isLoggedInToken, setIsLoggedInToken } = useContext(UserContext);
 
 	const handleLogin = async () => {
 		setIsLoginSuccess(false)
@@ -40,8 +39,7 @@ function LoginPage() {
 				}
 			})
 		if (res && res.status === STATUS_CODE_CREATED) {
-			setIsLoggedIn(true);
-			setToken(res.data.token)
+			setIsLoggedInToken(res.data.token);
 			setIsLoginSuccess(true)
 			document.cookie = res.data.token;
 			navigate("/home", { state: { token: res.data.token, username: username } })

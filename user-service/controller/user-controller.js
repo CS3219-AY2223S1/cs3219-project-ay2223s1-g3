@@ -58,7 +58,7 @@ export async function logoutUser(req, res) {
     try {
         const { username } = req.body
         if (username) {
-            const resp = await _logoutUser(username, req.headers.cookien)
+            const resp = await _logoutUser(username, req.headers.cookie)
             if (!resp) {
                 console.log('User does not exist!')
                 return res.status(400).json({ message: 'User does not exist!' })

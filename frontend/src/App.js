@@ -28,17 +28,17 @@ socket.on('connection', () => {
 
 
 function App() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedInToken, setIsLoggedInToken] = useState(null);
+    console.log(isLoggedInToken)
 
     const ProtectedRoute = ({ children }) => {
-        console.log(useContext(UserContext).isLoggedIn);
-        if (!isLoggedIn) {
+        if (!isLoggedInToken) {
             return <Navigate to="/" />;
         }
         return children;
     }
     return (
-        <UserContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+        <UserContext.Provider value={{ isLoggedInToken, setIsLoggedInToken }}>
             <ThemeProvider theme={theme}>
                 <div className="App">
                     <Box display={"flex"} flexDirection={"column"} height="100vh">
