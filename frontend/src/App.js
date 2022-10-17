@@ -28,15 +28,14 @@ const theme = createTheme({
     },
 });
 
-const socket = socketIO.connect("http://localhost:8001")
-socket.on('connection', () => {
-})
-
-
 function App() {
     const [isLoggedInToken, setIsLoggedInToken] = useState(null);
     console.log(isLoggedInToken)
-
+    const socket = socketIO.connect("http://localhost:8001", {
+        query: {isLoggedInToken}
+    })
+    socket.on('connection', () => {
+    })
     const ProtectedRoute = ({ children }) => {
         if (!isLoggedInToken) {
             return <Navigate to="/" />;
