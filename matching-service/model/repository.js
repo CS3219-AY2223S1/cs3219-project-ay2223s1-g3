@@ -6,7 +6,8 @@ let mongoUrl =
   process.env.NODE_ENV == "test"
     ? process.env.MONGO_TEST_DB_URL
     : process.env.MONGO_DB_URL;
-    
+
+console.log("NODE_ENV", process.env.NODE_ENV)
 mongoose
   .connect(mongoUrl, {
     useNewUrlParser: true,
