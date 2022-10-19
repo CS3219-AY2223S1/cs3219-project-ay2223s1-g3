@@ -1,6 +1,4 @@
 import { createServer } from "http";
-import { io as Client } from "socket.io-client";
-import io from "socket.io-client";
 import { Server } from "socket.io";
 import socketIO from "socket.io-client";
 import { assert, expect } from "chai";
@@ -10,15 +8,8 @@ import mongoose from "mongoose";
 import chai from "chai";
 import chaiHttp from "chai-http";
 import {
-  sendChatMessage,
-  sendMessage,
-  findMatch,
-  disconnect_match,
   createListeners,
 } from "../controller/matchingController.js";
-
-let should = chai.should();
-chai.use(chaiHttp);
 
 let client1, client2, db;
 
