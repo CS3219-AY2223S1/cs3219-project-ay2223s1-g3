@@ -8,7 +8,7 @@ name: Node.js CI Tests
 
 defaults:
   run:
-    working-directory: matching-service
+    working-directory: ./matching-service/
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x]
+        node-version: [14.x, 16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -32,8 +32,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
+          cache-dependency-path: './matching-service/package-lock.json'
       - name: Install dependencies
-        run: npm install
         run: npm ci
 
       - name: Run tests
