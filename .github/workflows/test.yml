@@ -10,6 +10,9 @@ defaults:
   run:
     working-directory: ./matching-service/
 
+env:
+  NODE_ENV: PROD
+  MONGO_TEST_DB_URL: ${{secrets.MONGO_TEST_DB_URL}}
 on:
   push:
     branches: [backend-unittest]
