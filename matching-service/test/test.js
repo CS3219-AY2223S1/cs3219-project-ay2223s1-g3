@@ -84,24 +84,14 @@ describe("Socket-io test", () => {
     it("disconnect event", (done) => {
       let message = "leaving room";
       client1.emit("disconnect-match", message);
-      let roomID = client1.id + "collab";
-      console.log(roomID)
+      let roomID1 = client1.id + "collab";
+      let roomID2 = client2.id + "collab";
+      let possibleRooms = [roomID1, roomID2];
       client2.on("disconnect-event", (obj) => {
         expect(obj).to.be.a("object");
-        expect(obj.room).to.be.equal(roomID)
-        //client1.disconnect();
-        //client2.disconnect();
+        expect(possibleRooms).to.include.members([obj.room])
         done();
       });
-      // setTimeout(() => {
-      //   client2.on("disconnect-event", (obj) => {
-      //     expect(obj).to.be.a("object");
-      //     expect(obj.message).to.equals(message);
-      //     //client1.disconnect();
-      //     //client2.disconnect();
-      //     done();
-      //   });
-      // }, "300")
     });
   });
 });
