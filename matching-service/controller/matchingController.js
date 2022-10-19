@@ -1,6 +1,6 @@
 import { ormCreateMatch, findMatch as _findMatch, deleteRoom, existInDb, findMatchDoc } from '../model/matching-orm.js';
 
-async function sendChatMessage(socket, io, message) {
+export async function sendChatMessage(socket, io, message) {
     const doc = await findMatchDoc(socket.id)
     console.log("socket making message", socket.id, message)
     console.log("room connected to", socket.rooms);
@@ -10,14 +10,14 @@ async function sendChatMessage(socket, io, message) {
     //socket.emit('send-chat-message', { room: doc.chatRoomID, message: message })
 }
 
-async function sendMessage(socket, io, message) {
+export async function sendMessage(socket, io, message) {
     const doc = await findMatchDoc(socket.id)
     console.log("socket making message", socket.id, message)
     console.log("room connected to", socket.rooms);
     socket.to(doc.roomID).emit('send-message', { room: doc.roomID, message: message });
 }
 
-async function findMatch(difficulty, socket, io, username) {
+export async function findMatch(difficulty, socket, io, username) {
     console.log("findMatch called", socket.id);
     const ifExist = await existInDb(socket.id)
     if (ifExist) {
@@ -52,7 +52,7 @@ async function findMatch(difficulty, socket, io, username) {
     }
 }
 
-async function disconnect_match(socket, io, message) {
+export async function disconnect_match(socket, io, message) {
     const doc = await findMatchDoc(socket.id);
     if (doc === null) {
         return;
