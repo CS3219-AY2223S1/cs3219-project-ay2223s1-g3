@@ -11,7 +11,7 @@ defaults:
     working-directory: ./matching-service/
 
 env:
-  NODE_ENV: PROD
+  NODE_ENV: test
   MONGO_TEST_DB_URL: ${{secrets.MONGO_TEST_DB_URL}}
 on:
   push:
