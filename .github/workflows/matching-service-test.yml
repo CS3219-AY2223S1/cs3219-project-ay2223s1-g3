@@ -21,7 +21,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -48,7 +48,7 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm test
+        run: npm test-github
         env:
           CI: true
 
