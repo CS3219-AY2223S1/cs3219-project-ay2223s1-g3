@@ -8,7 +8,7 @@
     "dev": "nodemon index.js",
     "start": "node index.js",
     "test": "set NODE_ENV=test&& mocha --exit",
-    "test_github": "NODE_ENV=test mocha --exit"
+    "test-github": "NODE_ENV=test mocha --exit"
   },
   "keywords": [],
   "author": "",
