@@ -7,4 +7,4 @@ start cmd /k npm start
 cd ../question-service
 start cmd /k npm start
 cd ../history-service
-start cmd /k npm run dev
+start cmd /k npm start

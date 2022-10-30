@@ -71,17 +71,18 @@ function HomePage({ socket }) {
 	const handleMatch = (roommates) => {
 		setTimer(-1);
 		setLoadingComment("Fetching question...");
-		getQuestionsDone(location.state.username)
+		const username = location.state.username;
+		getQuestionsDone(username)
 			.then((res) => res.data.filter(qn => qn.difficulty == difficulty))
 			.then((res) => res.map((data) => data.question))
 			.then((res) => {
 				getQuestion(difficulty, roommates, res)
 					.then((res) => {
-						addQuestionDone(location.state.username, res.num, difficulty)
+						addQuestionDone(username, res.num, difficulty, res.title, roommates.filter(e => e != username))
 
 						navigate('/room', {
 							state: {
-								username: location.state.username,
+								username: username,
 								question: res,
 								difficulty: difficulty,
 								roommates: roommates,
@@ -149,6 +150,12 @@ function HomePage({ socket }) {
 									<ListItem style={{ width: "600px", display: "flex", justifyContent: "space-between", marginTop: "15px" }}>
 										<div>
 											{item.question}
+										</div>
+										<div>
+											{item.title}
+										</div>
+										<div>
+											{item.roommates}
 										</div>
 										<div>
 											<Typography color={item.difficulty === "Hard" ? "red" : item.difficulty === "Medium" ? "orange" : "green"}>

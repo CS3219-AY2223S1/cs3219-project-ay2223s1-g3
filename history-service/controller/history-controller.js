@@ -12,7 +12,7 @@ export async function getQuestionsDone(req, res) {
         return res.status(400).json({ message: `Unable to retrieve user: ${username}` });
       }
       console.log(`Got questions done for username: ${username} successfully!`);
-      return res.status(201).json({ message: `Got questions done for username: ${username} successfully!`, data: resp });
+      return res.status(200).json({ message: `Got questions done for username: ${username} successfully!`, data: resp });
     } else {
       return res.status(400).json({ message: 'Username is missing!' });
     }
@@ -33,7 +33,7 @@ export async function addQuestionDone(req, res) {
         return res.status(400).json({ message: `Unable to add question: ${username}, ${jsonQuestionsDone}` });
       }
       console.log(`Added question done (${jsonQuestionsDone}) for username: ${username} successfully!`);
-      return res.status(201).json({ message: `Added question done (${jsonQuestionsDone}) for username: ${username} successfully!` });
+      return res.status(200).json({ message: `Added question done (${jsonQuestionsDone}) for username: ${username} successfully!` });
     } else {
       return res.status(400).json({ message: 'Username and/or question are missing!' });
     }
@@ -53,7 +53,7 @@ export async function deleteHistory(req, res) {
         return res.status(400).json({ message: `Unable to delete history: ${username}` });
       }
       console.log(`Deleted history for username: ${username} successfully!`);
-      return res.status(201).json({ message: `Delete history for username: ${username} successfully!` });
+      return res.status(200).json({ message: `Delete history for username: ${username} successfully!` });
     } else {
       return res.status(400).json({ message: 'Username is missing!' });
     }

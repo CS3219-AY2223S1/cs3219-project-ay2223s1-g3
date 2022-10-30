@@ -13,7 +13,6 @@ const defaultQn = {
  * @param {*} questionsDone
  * @returns {
  *  num: Number,
- *  title: String,
  *  title: String
  * }
  */
