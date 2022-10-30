@@ -1,4 +1,3 @@
-import { inBlacklist } from '../model/token-blacklist.js'
 import jwt from 'jsonwebtoken'
 import 'dotenv/config'
 
@@ -16,10 +15,6 @@ export async function signToken(username) {
 
 export async function verifyToken(username, token) {
     try {
-        if (await inBlacklist(token)) {
-            console.log(`ERROR: User: ${username}'s JWT is in blacklist`)
-            return null
-        }
         const decoded = jwt.verify(token, process.env.JWT_KEY)
         if (decoded.id != username) {
             return null
