@@ -12,6 +12,13 @@ const questionSchema = new Schema({
     required: true,
     enum: ['Easy', 'Medium', 'Hard']
   },
+  title: {
+    type: String,
+    required: true
+  },
+  roommates: [{
+    type: String
+  }],
   _id: false
 })
 const HistoryModelSchema = new Schema({

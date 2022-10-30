@@ -1,7 +1,5 @@
 import { historyInDb, createHistory, deleteHistory, getQuestionsDone, addQuestionDone } from './repository.js';
-import { addToBlacklist } from './token-blacklist.js';
-import { signToken, verifyToken } from '../middleware/authentication.js';
-import bcrypt from 'bcryptjs';
+import { verifyToken } from '../middleware/authentication.js';
 
 //need to separate orm functions from repository to decouple business logic from persistence
 

@@ -3,10 +3,9 @@ const history_service_url = 'http://localhost:8003/api/history/';
 /**
  * Returns qns done for user with username
  * @param {*} username
- * @param {*} token
  * @returns {
  *  message: String
- *  data: [{ question: Number, difficulty: String }]
+ *  data: [{ question: Number, difficulty: String, title: String, roommates: [String] }]
  * }
  */
 export async function getQuestionsDone(username) {
@@ -32,12 +31,13 @@ export async function getQuestionsDone(username) {
  * @param {*} username
  * @param {*} questionNum
  * @param {*} difficulty
- * @param {*} token
+ * @param {*} title
+ * @param {*} roommates
  * @returns {
  *  message: String
  * }
  */
-export async function addQuestionDone(username, questionNum, difficulty) {
+export async function addQuestionDone(username, questionNum, difficulty, title, roommates) {
   return await fetch(history_service_url + 'addQuestionDone', {
     method: 'POST',
     headers: {
@@ -45,7 +45,7 @@ export async function addQuestionDone(username, questionNum, difficulty) {
     },
     body: JSON.stringify({
       username: username,
-      questionDone: { question: questionNum, difficulty: difficulty },
+      questionDone: { question: questionNum, difficulty: difficulty, title, roommates },
     }),
     credentials: "include",
   })
