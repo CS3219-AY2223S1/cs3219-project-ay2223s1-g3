@@ -19,6 +19,7 @@ import { UserContext } from "./UserContext";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
 import BackgroundImage from "../HomeScreenBackground.png"
+import { BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts'
 
 function HomePage({ socket }) {
 	const [currentPage, setCurrentPage] = useState(1);
@@ -26,13 +27,34 @@ function HomePage({ socket }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [loadingComment, setLoadingComment] = useState("");
 	const [timer, setTimer] = useState(-1);
-	const [questionHistory, setQuestionHistory] = useState([
-	]);
+	const [questionHistory, setQuestionHistory] = useState([]);
 
-	const indexOfLastPost = currentPage * 4
-	const indexOfFirstPost = indexOfLastPost - 4
+	const indexOfLastPost = currentPage * 3
+	const indexOfFirstPost = indexOfLastPost - 3
 	const pageItems = questionHistory.slice(indexOfFirstPost, indexOfLastPost);
-	const pageCount = Math.ceil(questionHistory.length / 4);
+	const pageCount = Math.ceil(questionHistory.length / 3);
+	const easyCount = questionHistory.reduce((prev, curr) => {
+		if (curr.difficulty === "Easy") {
+			return prev + 1;
+		} else {
+			return prev
+		}
+	}, 0)
+	const mediumCount = questionHistory.reduce((prev, curr) => {
+		if (curr.difficulty === "Medium") {
+			return prev + 1;
+		} else {
+			return prev
+		}
+	}, 0)
+	const hardCount = questionHistory.reduce((prev, curr) => {
+		if (curr.difficulty === "Hard") {
+			return prev + 1;
+		} else {
+			return prev
+		}
+	}, 0)
+	const graphData = [{ "name": "Easy", "count": easyCount }, { "name": "Medium", "count": mediumCount }, { "name": "Hard", "count": hardCount }]
 
 	let navigate = useNavigate();
 	let location = useLocation();
@@ -126,7 +148,7 @@ function HomePage({ socket }) {
 	return (
 		<Box display={"flex"} flexDirection={"column"} justifyContent={"center"} height="100vh" alignItems={"center"} style={{ backgroundImage: `url(${BackgroundImage})`, backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundPosition: " center center" }}>
 			<Button variant="contained" style={{ position: "absolute", top: "20px", right: "20px" }} onClick={() => handleLogout()} color={"warning"}><b>Logout</b></Button>
-			<Typography variant={"h3"} marginBottom={"3rem"} fontWeight="bold">PeerPrep</Typography>
+			<Typography variant={"h3"} marginBottom={"2rem"} fontWeight="bold">PeerPrep</Typography>
 			<Typography variant={"body1"} fontWeight="bold">Select difficulty level</Typography>
 			<FormControl sx={{ m: 2, minWidth: 300 }}>
 				<Select
@@ -148,15 +170,17 @@ function HomePage({ socket }) {
 						<CircularProgress />
 						{loadingComment}
 					</>
-					: <Button variant="contained" style={{ width: "300px", borderRadius: "8px", padding: "10px", marginBottom: "5rem" }} onClick={handleClick}><b>Let's go</b></Button>
+					: <Button variant="contained" style={{ width: "300px", borderRadius: "8px", padding: "10px", marginBottom: "4rem" }} onClick={handleClick}><b>Let's go</b></Button>
 			}
-			<div style={{ display: "flex", flexDirection: "column", border: "solid 1px #1976d2", borderRadius: "14px", minWidth: "600px", minHeight: "340px" }}>
-				<Typography variant="h5" component="div" style={{ color: "white", backgroundColor: "#1976d2", borderRadius: "11px 11px 0px 0px", height: "40px", padding: "14px" }}>
+			<BarChart width={800} height={250} data={graphData}><XAxis dataKey="name" /> <YAxis /> <Tooltip /><Bar dataKey="count" fill="#8884d8" />
+			</BarChart>
+			<div style={{ display: "flex", flexDirection: "column", border: "solid 1px #1976d2", borderRadius: "14px", minWidth: "600px", minHeight: "200px", marginTop: "40px" }}>
+				<Typography variant="h6" component="div" style={{ color: "white", backgroundColor: "#1976d2", borderRadius: "11px 11px 0px 0px", height: "30px", padding: "10px" }}>
 					Attempted Questions
 				</Typography>
 				<div style={{ display: "flex", flexDirection: "column" }}>
 					{questionHistory.length === 0 ? <Typography style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "150px" }}>No attempts yet!</Typography> : <List >
-						{pageItems.map(item => {
+						{pageItems.map((item, index) => {
 							return (
 								<>
 									<ListItem style={{ width: "600px", display: "flex", justifyContent: "space-between", marginTop: "5px" }}>
@@ -172,7 +196,7 @@ function HomePage({ socket }) {
 											</Typography>
 										</div>
 									</ListItem>
-									<Divider style={{ marginTop: "5px" }} />
+									{index === 2 ? null : <Divider style={{ marginTop: "5px" }} />}
 								</>
 							)
 						})}
