@@ -9,7 +9,8 @@ import {
 	ListItem,
 	MenuItem,
 	Select,
-	Typography
+	Typography,
+	Pagination
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom"
 import { getQuestion } from "../api/question-service"
@@ -20,11 +21,18 @@ import { URL_USER_SVC } from "../configs";
 import BackgroundImage from "../HomeScreenBackground.png"
 
 function HomePage({ socket }) {
+	const [currentPage, setCurrentPage] = useState(1);
 	const [difficulty, setDifficulty] = useState("Easy");
 	const [isLoading, setIsLoading] = useState(false);
 	const [loadingComment, setLoadingComment] = useState("");
 	const [timer, setTimer] = useState(-1);
-	const [questionHistory, setQuestionHistory] = useState([]);
+	const [questionHistory, setQuestionHistory] = useState([
+	]);
+
+	const indexOfLastPost = currentPage * 4
+	const indexOfFirstPost = indexOfLastPost - 4
+	const pageItems = questionHistory.slice(indexOfFirstPost, indexOfLastPost);
+	const pageCount = Math.ceil(questionHistory.length / 4);
 
 	let navigate = useNavigate();
 	let location = useLocation();
@@ -57,6 +65,10 @@ function HomePage({ socket }) {
 		// Socket connections are disconnected on page refresh and that is the expected behavior across browsers.
 		socket.emit('find-match', difficulty, location.state.username);
 		setTimer(match_timeout) // triggers useEffect
+	}
+
+	const handlePageChange = (event, page) => {
+		setCurrentPage(page)
 	}
 
 	useEffect(() => {
@@ -138,24 +150,21 @@ function HomePage({ socket }) {
 					</>
 					: <Button variant="contained" style={{ width: "300px", borderRadius: "8px", padding: "10px", marginBottom: "5rem" }} onClick={handleClick}><b>Let's go</b></Button>
 			}
-			<div style={{ display: "flex", flexDirection: "column", border: "solid 1px #1976d2", borderRadius: "14px", minWidth: "600px", minHeight: "400px" }}>
+			<div style={{ display: "flex", flexDirection: "column", border: "solid 1px #1976d2", borderRadius: "14px", minWidth: "600px", minHeight: "340px" }}>
 				<Typography variant="h5" component="div" style={{ color: "white", backgroundColor: "#1976d2", borderRadius: "11px 11px 0px 0px", height: "40px", padding: "14px" }}>
 					Attempted Questions
 				</Typography>
 				<div style={{ display: "flex", flexDirection: "column" }}>
 					{questionHistory.length === 0 ? <Typography style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "150px" }}>No attempts yet!</Typography> : <List >
-						{questionHistory.map(item => {
+						{pageItems.map(item => {
 							return (
 								<>
-									<ListItem style={{ width: "600px", display: "flex", justifyContent: "space-between", marginTop: "15px" }}>
-										<div>
-											{item.question}
-										</div>
+									<ListItem style={{ width: "600px", display: "flex", justifyContent: "space-between", marginTop: "5px" }}>
 										<div>
 											{item.title}
 										</div>
 										<div>
-											{item.roommates}
+											{item.roommates.map(roommate => <Typography>{roommate}</Typography>)}
 										</div>
 										<div>
 											<Typography color={item.difficulty === "Hard" ? "red" : item.difficulty === "Medium" ? "orange" : "green"}>
@@ -163,13 +172,14 @@ function HomePage({ socket }) {
 											</Typography>
 										</div>
 									</ListItem>
-									<Divider style={{ marginTop: "15px" }} />
+									<Divider style={{ marginTop: "5px" }} />
 								</>
 							)
 						})}
 					</List>}
 				</div>
 			</div>
+			<Pagination sx={{ alignSelf: "center" }} size="large" count={pageCount} onChange={handlePageChange} />
 		</Box >
 	)
 
