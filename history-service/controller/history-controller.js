@@ -14,7 +14,7 @@ export async function getQuestionsDone(req, res) {
       console.log(`Got questions done for username: ${username} successfully!`);
       return res.status(200).json({ message: `Got questions done for username: ${username} successfully!`, data: resp });
     } else {
-      return res.status(400).json({ message: 'Username is missing!' });
+      return res.status(400).json({ message: 'Username is missing!!' });
     }
   } catch (err) {
     console.log(err);
