@@ -1,5 +1,5 @@
-const history_service_url = 'http://localhost:8003/api/history/';
-
+//const history_service_url = 'http://localhost:8003/api/history/';
+const history_service_url = 'https://history-service-xkpqea35pq-as.a.run.app';
 /**
  * Returns qns done for user with username
  * @param {*} username
