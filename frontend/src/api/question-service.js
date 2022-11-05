@@ -1,5 +1,5 @@
 //const question_service_url = "http://localhost:8002/"
-const question_service_url = "https://question-service-xkpqea35pq-as.a.run.app";
+const question_service_url = "https://question-service-xkpqea35pq-as.a.run.app/";
 
 const defaultQn = {
   num: 0,
