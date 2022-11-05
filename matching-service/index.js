@@ -6,7 +6,7 @@ import { createListeners } from "./controller/matchingController.js";
 
 const app = express();
 const corsOptions = {
-  origin: '*',
+  origin: 'https://matching-service-xkpqea35pq-as.a.run.app',
 };
 
 app.use(express.urlencoded({ extended: true }));
@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 });
 
 const httpServer = createServer(app);
-const io = new Server(httpServer, { cors: {}});
+const io = new Server(httpServer, { cors: {} });
 
 httpServer.listen(8001, () => {
   console.log("listening on *:8001");

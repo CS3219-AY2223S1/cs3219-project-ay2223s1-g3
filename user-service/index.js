@@ -5,7 +5,7 @@ import 'dotenv/config'
 const corsConfig = {
     credentials: true,
     origin: true,
-  };
+};
 
 const app = express();
 app.use(express.urlencoded({ extended: true }))
@@ -37,7 +37,7 @@ router.post('/pwChange', pwChange)
 
 app.use('/api/user', router).all((_, res) => {
     res.setHeader('content-type', 'application/json')
-    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Origin', 'https://user-service-xkpqea35pq-as.a.run.app')
 })
 
 app.listen(8000, () => console.log('user-service listening on port 8000'));

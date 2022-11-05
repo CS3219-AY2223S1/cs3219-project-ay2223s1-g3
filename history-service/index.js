@@ -25,7 +25,7 @@ router.post('/deleteHistory', deleteHistory);
 
 app.use('/api/history', router).all((_, res) => {
   res.setHeader('content-type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'https://history-service-xkpqea35pq-as.a.run.app');
 });
 
 app.listen(8003, () => console.log('history-service listening on port 8003'));
