@@ -80,7 +80,7 @@ jobs:
         id: auth
         uses: 'google-github-actions/auth@v0'
         with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }}''
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
       # BEGIN - Docker auth and build (NOTE: If you already have a container image, these Docker steps can be omitted)
 
@@ -97,7 +97,7 @@ jobs:
         run: |-
           docker build -f user-service/Dockerfile -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/user:${{ github.sha }}" ./
           docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/user:${{ github.sha }}"
-          
+
 #       - name: Build and Push Matching Service Container
 #         run: |-
 #           docker build -f matching-service/Dockerfile -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/matching:${{ github.sha }}" ./
@@ -112,7 +112,7 @@ jobs:
 #         run: |-
 #           docker build -f history-service/Dockerfile -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/history:${{ github.sha }}" ./
 #           docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/history:${{ github.sha }}"
-          
+
       # END - Docker auth and build
 
       - name: Deploy User Service to Cloud Run
