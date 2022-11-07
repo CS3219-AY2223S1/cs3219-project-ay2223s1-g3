@@ -58,22 +58,22 @@ env:
 jobs:
   deploy:
     # Add 'id-token' with the intended permissions for workload identity federation
-#     permissions:
-#       contents: 'read'
-#       id-token: 'write'
+    # permissions:
+    #   contents: 'read'
+    #   id-token: 'write'
 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-#       - name: Google Auth
-#         id: auth
-#         uses: 'google-github-actions/auth@v0'
-#         with:
-#           token_format: 'access_token'
-#           workload_identity_provider: '${{ secrets.WIF_PROVIDER }}' # e.g. - projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider
-#           service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}' # e.g. - my-service-account@my-project.iam.gserviceaccount.com
+      # - name: Google Auth
+      #   id: auth
+      #   uses: 'google-github-actions/auth@v0'
+      #   with:
+      #     token_format: 'access_token'
+      #     workload_identity_provider: '${{ secrets.WIF_PROVIDER }}' # e.g. - projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider
+      #     service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}' # e.g. - my-service-account@my-project.iam.gserviceaccount.com
 
       # NOTE: Alternative option - authentication via credentials json
       - name: Google Auth
@@ -85,33 +85,33 @@ jobs:
       # BEGIN - Docker auth and build (NOTE: If you already have a container image, these Docker steps can be omitted)
 
       # Authenticate Docker to Google Cloud Artifact Registry
-      - name: Docker Auth
-        id: docker-auth
-        uses: 'docker/login-action@v1'
-        with:
-          username: 'oauth2accesstoken'
-          password: '${{ steps.auth.outputs.access_token }}'
-          registry: '${{ env.GAR_LOCATION }}'
+      # - name: Docker Auth
+      #   id: docker-auth
+      #   uses: 'docker/login-action@v1'
+      #   with:
+      #     username: 'oauth2accesstoken'
+      #     password: '${{ steps.auth.outputs.access_token }}'
+      #     registry: '${{ env.GAR_LOCATION }}'
 
       - name: Build and Push User Service Container
         run: |-
           docker build -f user-service/Dockerfile -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/user:${{ github.sha }}" ./
           docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/user:${{ github.sha }}"
 
-#       - name: Build and Push Matching Service Container
-#         run: |-
-#           docker build -f matching-service/Dockerfile -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/matching:${{ github.sha }}" ./
-#           docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/matching:${{ github.sha }}"
+      # - name: Build and Push Matching Service Container
+      #   run: |-
+      #     docker build -f matching-service/Dockerfile -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/matching:${{ github.sha }}" ./
+      #     docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/matching:${{ github.sha }}"
 
-#       - name: Build and Push Question Service Container
-#         run: |-
-#           docker build -f question-service/Dockerfile -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/question:${{ github.sha }}" ./
-#           docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/question:${{ github.sha }}"
+      # - name: Build and Push Question Service Container
+      #   run: |-
+      #     docker build -f question-service/Dockerfile -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/question:${{ github.sha }}" ./
+      #     docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/question:${{ github.sha }}"
 
-#       - name: Build and Push History Service Container
-#         run: |-
-#           docker build -f history-service/Dockerfile -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/history:${{ github.sha }}" ./
-#           docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/history:${{ github.sha }}"
+      # - name: Build and Push History Service Container
+      #   run: |-
+      #     docker build -f history-service/Dockerfile -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/history:${{ github.sha }}" ./
+      #     docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/history:${{ github.sha }}"
 
       # END - Docker auth and build
 
