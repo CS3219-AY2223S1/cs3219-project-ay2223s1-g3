@@ -94,8 +94,9 @@ jobs:
       #     registry: '${{ env.GAR_LOCATION }}'
 
       - name: Build and Push User Service Container
+        working-directory: ./user-service
         run: |-
-          docker build -f user-service/Dockerfile -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/user:${{ github.sha }}" ./
+          docker build -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/user:${{ github.sha }}" ./
           docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/user:${{ github.sha }}"
 
       # - name: Build and Push Matching Service Container
