@@ -61,8 +61,12 @@ export async function logoutUser(req, res) {
         });
         console.log('Header: ' + reqData)
         const { username } = req.body
+        console.log("token", req.headers["authorization"])
+        console.log("username", req.body)
+        console.log("username", req.body.username)
         if (username) {
-            const resp = await _logoutUser(username, req.headers.cookie)
+            console.log("token", req.headers["authorization"])
+            const resp = await _logoutUser(username, req.headers["authorization"])
             if (!resp) {
                 console.log('User does not exist!')
                 return res.status(400).json({ message: 'User does not exist!' })

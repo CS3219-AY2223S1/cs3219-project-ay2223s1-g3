@@ -38,7 +38,7 @@ router.post('/delete', deleteUser)
 router.post('/pwChange', pwChange)
 
 app.use('/api/user', router).all((_, res) => {
-    //res.setHeader('content-type', 'application/json')
+    res.setHeader('content-type', 'application/json')
     //res.setHeader('Access-Control-Allow-Origin', 'https://frontend-xkpqea35pq-as.a.run.app')
     res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,PATCH,OPTIONS");

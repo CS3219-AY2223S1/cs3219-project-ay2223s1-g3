@@ -136,15 +136,17 @@ function HomePage({ socket }) {
 	}
 
 	const handleLogout = async () => {
+		console.log(document.cookie)
 		const headerConfig = {
 			headers: {
-				Authorization: 'Lol',
-				"Content-Type": "application/x-www-form-urlencoded",
+				Authorization: document.cookie,
+				"Content-Type": "application/json",
 			}
 		}
 		const username = location.state.username
+		console.log("username", username)
 		//const res = await axios.post(URL_USER_SVC + "/logout", { username }, { withCredentials: true })
-		const res = await axios.post(URL_USER_SVC + "/logout", { username }, headerConfig)
+		const res = await axios.post(URL_USER_SVC + "/logout", { "username": username }, headerConfig)
 
 
 		if (res) {
