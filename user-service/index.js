@@ -4,7 +4,8 @@ import 'dotenv/config'
 
 const corsConfig = {
     credentials: true,
-    origin: true,
+    origin: 'https://frontend-xkpqea35pq-as.a.run.app',
+    //origin: true,
 };
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(
     cookieSession({
         name: "cs3219-project-session",
         secret: process.env.COOKIE_SECRET,
+        sameSite: 'none',
         httpOnly: true
     })
 )
@@ -36,8 +38,12 @@ router.post('/delete', deleteUser)
 router.post('/pwChange', pwChange)
 
 app.use('/api/user', router).all((_, res) => {
-    res.setHeader('content-type', 'application/json')
-    res.setHeader('Access-Control-Allow-Origin', 'https://user-service-xkpqea35pq-as.a.run.app')
-})
+    //res.setHeader('content-type', 'application/json')
+    //res.setHeader('Access-Control-Allow-Origin', 'https://frontend-xkpqea35pq-as.a.run.app')
+    res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,PATCH,OPTIONS");
+	res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, Content-Length, X-Requested-With");})
+
+app.enable('trust proxy')
 
 app.listen(8000, () => console.log('user-service listening on port 8000'));

@@ -56,6 +56,10 @@ export async function loginUser(req, res) {
 export async function logoutUser(req, res) {
     console.log(req.session)
     try {
+        const reqData = JSON.stringify({
+            headers: req.headers,
+        });
+        console.log('Header: ' + reqData)
         const { username } = req.body
         if (username) {
             const resp = await _logoutUser(username, req.headers.cookie)
