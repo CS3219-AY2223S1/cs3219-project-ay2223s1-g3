@@ -1,5 +1,6 @@
 //const history_service_url = 'http://localhost:8003/api/history/';
-const history_service_url = 'https://history-service-xkpqea35pq-as.a.run.app/api/history/';
+const history_service_url =
+  "https://history-service-xkpqea35pq-as.a.run.app/api/history/";
 /**
  * Returns qns done for user with username
  * @param {*} username
@@ -8,14 +9,23 @@ const history_service_url = 'https://history-service-xkpqea35pq-as.a.run.app/api
  *  data: [{ question: Number, difficulty: String, title: String, roommates: [String] }]
  * }
  */
+
+const headerConfig = {
+  headers: {
+    Authorization: document.cookie,
+    "Content-Type": "application/json",
+  },
+};
+
 export async function getQuestionsDone(username) {
-  return await fetch(history_service_url + 'getQuestionsDone', {
-    method: 'POST',
+  return await fetch(history_service_url + "getQuestionsDone", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      Authorization: document.cookie,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ username: username }),
-    credentials: 'include',
+    //credentials: 'include',
   })
     .then((res) => {
       if (!res.ok) {
@@ -37,17 +47,29 @@ export async function getQuestionsDone(username) {
  *  message: String
  * }
  */
-export async function addQuestionDone(username, questionNum, difficulty, title, roommates) {
-  return await fetch(history_service_url + 'addQuestionDone', {
-    method: 'POST',
+export async function addQuestionDone(
+  username,
+  questionNum,
+  difficulty,
+  title,
+  roommates
+) {
+  return await fetch(history_service_url + "addQuestionDone", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
+      Authorization: document.cookie,
     },
     body: JSON.stringify({
       username: username,
-      questionDone: { question: questionNum, difficulty: difficulty, title, roommates },
+      questionDone: {
+        question: questionNum,
+        difficulty: difficulty,
+        title,
+        roommates,
+      },
     }),
-    credentials: "include",
+    //credentials: "include",
   })
     .then((res) => {
       if (!res.ok) {
