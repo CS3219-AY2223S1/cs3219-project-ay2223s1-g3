@@ -6,7 +6,8 @@ import { createListeners } from "./controller/matchingController.js";
 
 const app = express();
 const corsOptions = {
-  origin: 'https://matching-service-xkpqea35pq-as.a.run.app',
+  //origin: 'https://matching-service-xkpqea35pq-as.a.run.app',
+  origin: true,
 };
 
 app.use(express.urlencoded({ extended: true }));

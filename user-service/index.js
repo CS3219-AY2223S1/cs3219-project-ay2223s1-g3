@@ -4,8 +4,8 @@ import 'dotenv/config'
 
 const corsConfig = {
     credentials: true,
-    origin: 'https://frontend-xkpqea35pq-as.a.run.app',
-    //origin: true,
+    //origin: 'https://frontend-xkpqea35pq-as.a.run.app',
+    origin: true,
 };
 
 const app = express();
