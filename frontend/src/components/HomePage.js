@@ -194,7 +194,7 @@ function HomePage({ socket }) {
 							return (
 								<>
 									<ListItem style={{ width: "600px", display: "flex", justifyContent: "space-between", marginTop: "5px" }}>
-										<div>
+										<div style={{ width: "170px" }}>
 											{item.title}
 										</div>
 										<div>
