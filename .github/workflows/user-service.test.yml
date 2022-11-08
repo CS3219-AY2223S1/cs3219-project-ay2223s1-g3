@@ -14,7 +14,7 @@ env:
   NODE_ENV: test
   MONGO_TEST_DB_URL: ${{secrets.MONGO_TEST_DB_URL}}
   REDIS_CLOUD_IP: ${{secrets.REDIS_CLOUD_IP}}
-  REDIS_CLOUD_PORT: {{secrets.REDIS_CLOUD_PORT}}
+  REDIS_CLOUD_PORT: ${{secrets.REDIS_CLOUD_PORT}}
   REDIS_CLOUD_PW: ${{secrets.REDIS_CLOUD_PW}}
 on:
   push:
