@@ -50,9 +50,8 @@ jobs:
       - name: Create .env
         run: |
           touch .env
-          echo MONGO_URI_TEST=mongodb://localhost:27017/project3219 >> .env
-          echo JWT_SECRET_KEY=testSecretKey >> .env
-          
+          echo JWT_KEY=testSecretKey >> .env
+
       - name: Run history service tests
         run: npm run test-github
         env:
