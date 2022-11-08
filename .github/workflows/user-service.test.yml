@@ -19,7 +19,7 @@ env:
   COOKIE_SECRET: ${{secrets.COOKIE_SECRET}}
 on:
   push:
-    branches: [backend-unittest]
+    branches: [main]
   pull_request:
     branches: [main]
 

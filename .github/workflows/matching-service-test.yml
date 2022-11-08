@@ -15,7 +15,7 @@ env:
   MONGO_TEST_DB_URL: ${{secrets.MONGO_TEST_DB_URL}}
 on:
   push:
-    branches: [backend-unittest]
+    branches: [main]
   pull_request:
     branches: [main]
 
