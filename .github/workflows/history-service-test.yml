@@ -47,16 +47,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Create .env
+        run: |
+          touch .env
+          echo MONGO_URI_TEST=mongodb://localhost:27017/project3219 >> .env
+          echo JWT_SECRET_KEY=testSecretKey >> .env
+          
       - name: Run history service tests
         run: npm run test-github
         env:
           CI: true
-       - name: Create .env
-        run: |
-          touch .env
-          echo JWT_SECRET_KEY=testSecretKey >> .env
-      - name: Test server
-        run: npm test
 
     
         
