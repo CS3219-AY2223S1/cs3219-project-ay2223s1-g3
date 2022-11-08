@@ -46,6 +46,7 @@ describe('history-service', () => {
 
   it('should get questions done from a user', (done) => {
     const username = 'dumdum';
+    console.log("key", process.env.JWT_KEY)
     const token = jwt.sign({ id: username }, process.env.JWT_KEY);
 
     chai
