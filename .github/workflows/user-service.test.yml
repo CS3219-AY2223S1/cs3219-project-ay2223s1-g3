@@ -4,11 +4,11 @@
 # This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Node.js CI Test (HISTORY)
+name: Node.js CI Test (USER)
 
 defaults:
   run:
-    working-directory: ./history-service/
+    working-directory: ./user-service/
 
 env:
   NODE_ENV: test
@@ -52,7 +52,7 @@ jobs:
           touch .env
           echo JWT_KEY=testSecretKey >> .env
 
-      - name: Run history service tests
+      - name: Run user service tests
         run: npm run test-github
         env:
           CI: true
