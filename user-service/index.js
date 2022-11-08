@@ -47,3 +47,5 @@ app.use('/api/user', router).all((_, res) => {
 app.enable('trust proxy')
 
 app.listen(8000, () => console.log('user-service listening on port 8000'));
+
+export default app;

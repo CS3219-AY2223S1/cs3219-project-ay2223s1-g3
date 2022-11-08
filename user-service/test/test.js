@@ -1,142 +1,56 @@
-import app from '../index.js';
-import chai, { assert } from 'chai';
-import chaiHttp from 'chai-http';
-import mongoose from 'mongoose';
-import HistoryModel from '../model/history-model.js';
-import jwt from 'jsonwebtoken';
-import 'dotenv/config';
+import app from "../index.js";
+import chai, { assert } from "chai";
+import chaiHttp from "chai-http";
+import mongoose from "mongoose";
+import UserModel from "../model/user-model.js";
+import jwt from "jsonwebtoken";
+import "dotenv/config";
+import bcrypt from "bcryptjs";
 
 let should = chai.should();
 chai.use(chaiHttp);
 
-mongoose.connect(process.env.MONGO_TEST_DB_URL);
+mongoose.connect(process.env.DB_LOCAL_URI);
 const db = mongoose.connection
-  .once('open', () => console.log('Connected!'))
-  .on('error', (error) => {
-    console.warn('Error : ', error);
-  });
-
-const hardqn1 = {
-  question: 1,
-  difficulty: 'Hard',
-  title: 'mom',
-  roommates: ['you'],
-};
-const hardqn2 = {
-  question: 2,
-  difficulty: 'Hard',
-  title: 'dad',
-  roommates: ['me'],
-};
-
-describe('history-service', () => {
-  beforeEach(async () => {
-    const newHistory = new HistoryModel({
-      username: 'dumdum',
-      questionsDone: [hardqn1],
+    .once("open", () => console.log("Connected!"))
+    .on("error", (error) => {
+        console.warn("Error : ", error);
     });
-    await newHistory.save();
-  });
 
-  afterEach((done) => {
-    db.collections.historymodels.drop(() => {
-      done();
+const simplePw = "password";
+
+describe("user-service", () => {
+    beforeEach(async () => {
+        const password = bcrypt.hashSync(simplePw);
+        const newUser = new UserModel({
+            username: "test-user",
+            password: password,
+        });
+        await newUser.save();
     });
-  });
 
-  it('should get questions done from a user', (done) => {
-    const username = 'dumdum';
-    const token = jwt.sign({ id: username }, process.env.JWT_KEY);
+    afterEach(async () => {
+        await db.collections.usermodels.drop();
+    });
 
-    chai
-      .request(app)
-      .post('/api/history/getQuestionsDone')
-      .set('content-type', 'application/json')
-      .set('Cookie', token)
-      .send({
-        username: username,
-      })
-      .end((err, res) => {
-        res.should.have.status(200);
-        res.body.data[0].should.be.deep.equal(hardqn1);
-        done();
-      });
-  });
-
-  it('should not get history from no user', (done) => {
-    chai
-      .request(app)
-      .post('/api/history/getQuestionsDone')
-      .set('content-type', 'application/json')
-      .send({})
-      .end((err, res) => {
-        res.should.have.status(400);
-        done();
-      });
-  });
-
-  it('should add new history for new user', (done) => {
-    const username = 'you';
-    const token = jwt.sign({ id: username }, process.env.JWT_KEY);
-
-    chai
-      .request(app)
-      .post('/api/history/addQuestionDone')
-      .set('content-type', 'application/json')
-      .set('Cookie', token)
-      .send({
-        username: username,
-        questionDone: hardqn1,
-      })
-      .end((err, res) => {
-        res.should.have.status(200);
-
-        chai
-          .request(app)
-          .post('/api/history/getQuestionsDone')
-          .set('content-type', 'application/json')
-          .set('Cookie', token)
-          .send({
+    it("should create a user", async () => {
+        const username = "test-user1";
+        const password = simplePw;
+        const result = await chai
+            .request(app)
+            .post("/api/user")
+            .set("content-type", "application/json")
+            .send({
+                username: username,
+                password: password,
+            });
+        result.should.have.status(201);
+        result.body.should.be.deep.equal({
+            message: "Created new user test-user1 successfully!",
+        });
+        const user = await db.collections.usermodels.findOne({
             username: username,
-          })
-          .end((err, res) => {
-            res.should.have.status(200);
-            res.body.data[0].should.be.deep.equal(hardqn1);
-            done();
-          });
-      });
-  });
-
-  it('should add question done to existing history', (done) => {
-    const username = 'dumdum';
-    const token = jwt.sign({ id: username }, process.env.JWT_KEY);
-
-    chai
-      .request(app)
-      .post('/api/history/addQuestionDone')
-      .set('content-type', 'application/json')
-      .set('Cookie', token)
-      .send({
-        username: username,
-        questionDone: hardqn2,
-      })
-      .end((err, res) => {
-        res.should.have.status(200);
-
-        chai
-          .request(app)
-          .post('/api/history/getQuestionsDone')
-          .set('content-type', 'application/json')
-          .set('Cookie', token)
-          .send({
-            username: username,
-          })
-          .end((err, res) => {
-            res.should.have.status(200);
-            res.body.data[0].should.be.deep.equal(hardqn1);
-            res.body.data[1].should.be.deep.equal(hardqn2);
-            done();
-          });
-      });
-  });
+        });
+        should.equal(true, bcrypt.compareSync(password, user.password));
+    });
 });
