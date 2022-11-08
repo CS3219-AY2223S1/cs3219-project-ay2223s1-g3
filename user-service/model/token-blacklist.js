@@ -67,11 +67,13 @@ function reloadRedis() {
     JwtModel.find({}, (err, jwts) => {
         if (err) console.log("Unable to retrieve JWTs from MongoDB.");
         jwts.map(async (jwt) => {
-            console.log(jwt);
             let token = jwt.token;
             if (!(await redisClient.get(`bl_${token}`))) {
                 let token_key = `bl_${token}`;
+                const date = new Date();
+                const seconds = Math.floor(date.getTime() / 1000);
                 await redisClient.set(token_key, token);
+                redisClient.expireAt(token_key, seconds + 3600);
             }
         });
     });
