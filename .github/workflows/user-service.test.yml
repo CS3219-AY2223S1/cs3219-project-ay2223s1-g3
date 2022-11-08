@@ -13,6 +13,10 @@ defaults:
 env:
   NODE_ENV: test
   MONGO_TEST_DB_URL: ${{secrets.MONGO_TEST_DB_URL}}
+  REDIS_CLOUD_IP: ${{secrets.REDIS_CLOUD_IP}}
+  REDIS_CLOUD_PORT: ${{secrets.REDIS_CLOUD_PORT}}
+  REDIS_CLOUD_PW: ${{secrets.REDIS_CLOUD_PW}}
+  COOKIE_SECRET: ${{secrets.COOKIE_SECRET}}
 on:
   push:
     branches: [backend-unittest]
@@ -51,6 +55,7 @@ jobs:
         run: |
           touch .env
           echo JWT_KEY=testSecretKey >> .env
+          echo DB_LOCAL_URI=mongodb://localhost:27017/test >> .env
 
       - name: Run user service tests
         run: npm run test-github
