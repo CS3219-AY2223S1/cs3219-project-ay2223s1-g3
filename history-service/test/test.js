@@ -53,7 +53,7 @@ describe('history-service', () => {
       .request(app)
       .post('/api/history/getQuestionsDone')
       .set('content-type', 'application/json')
-      .set('Cookie', token)
+      .set('authorization', token)
       .send({
         username: username,
       })
@@ -84,7 +84,7 @@ describe('history-service', () => {
       .request(app)
       .post('/api/history/addQuestionDone')
       .set('content-type', 'application/json')
-      .set('Cookie', token)
+      .set('authorization', token)
       .send({
         username: username,
         questionDone: hardqn1,
@@ -96,7 +96,7 @@ describe('history-service', () => {
           .request(app)
           .post('/api/history/getQuestionsDone')
           .set('content-type', 'application/json')
-          .set('Cookie', token)
+          .set('authorization', token)
           .send({
             username: username,
           })
@@ -116,7 +116,7 @@ describe('history-service', () => {
       .request(app)
       .post('/api/history/addQuestionDone')
       .set('content-type', 'application/json')
-      .set('Cookie', token)
+      .set('authorization', token)
       .send({
         username: username,
         questionDone: hardqn2,
@@ -128,7 +128,7 @@ describe('history-service', () => {
           .request(app)
           .post('/api/history/getQuestionsDone')
           .set('content-type', 'application/json')
-          .set('Cookie', token)
+          .set('authorization', token)
           .send({
             username: username,
           })
