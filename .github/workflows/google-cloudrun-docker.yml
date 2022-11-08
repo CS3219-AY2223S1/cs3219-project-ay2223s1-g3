@@ -47,8 +47,6 @@ name: Build and Deploy to Cloud Run
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 env:
   PROJECT_ID: cs3219-project-g3
