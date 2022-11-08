@@ -108,25 +108,34 @@ jobs:
           docker build -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/user:${{ github.sha }}" ./
           docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/user:${{ github.sha }}"
 
-      # - name: Build and Push Matching Service Container
-      #   run: |-
-      #     docker build -f matching-service/Dockerfile -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/matching:${{ github.sha }}" ./
-      #     docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/matching:${{ github.sha }}"
+      - name: Build and Push Matching Service Container
+        working-directory: ./matching-service
+        run: |-
+          docker build -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/matching:${{ github.sha }}" ./
+          docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/matching:${{ github.sha }}"
 
-      # - name: Build and Push Question Service Container
-      #   run: |-
-      #     docker build -f question-service/Dockerfile -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/question:${{ github.sha }}" ./
-      #     docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/question:${{ github.sha }}"
+      - name: Build and Push Question Service Container
+        working-directory: ./question-service
+        run: |-
+          docker build -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/question:${{ github.sha }}" ./
+          docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/question:${{ github.sha }}"
 
-      # - name: Build and Push History Service Container
-      #   run: |-
-      #     docker build -f history-service/Dockerfile -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/history:${{ github.sha }}" ./
-      #     docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/history:${{ github.sha }}"
+      - name: Build and Push History Service Container
+        working-directory: ./history-service
+        run: |-
+          docker build -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/history:${{ github.sha }}" ./
+          docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/history:${{ github.sha }}"
+          
+      - name: Build and Push Frontend Container
+        working-directory: ./frontend
+        run: |-
+          docker build -t "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/frontend:${{ github.sha }}" ./
+          docker push "${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/frontend:${{ github.sha }}"
 
       # END - Docker auth and build
 
       - name: Deploy User Service to Cloud Run
-        id: deploy
+        id: deploy-user
         uses: google-github-actions/deploy-cloudrun@v0
         with:
           service: user-service
@@ -134,6 +143,46 @@ jobs:
           # NOTE: If using a pre-built image, update the image name here
           image: ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/user:${{ github.sha }}
           flags: '--port=8000'
+          
+      - name: Deploy Matching Service to Cloud Run
+        id: deploy-matching
+        uses: google-github-actions/deploy-cloudrun@v0
+        with:
+          service: matching-service
+          region: ${{ env.REGION }}
+          # NOTE: If using a pre-built image, update the image name here
+          image: ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/matching:${{ github.sha }}
+          flags: '--port=8001'
+      
+      - name: Deploy Question Service to Cloud Run
+        id: deploy-question
+        uses: google-github-actions/deploy-cloudrun@v0
+        with:
+          service: question-service
+          region: ${{ env.REGION }}
+          # NOTE: If using a pre-built image, update the image name here
+          image: ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/question:${{ github.sha }}
+          flags: '--port=8002'
+      
+      - name: Deploy History Service to Cloud Run
+        id: deploy-history
+        uses: google-github-actions/deploy-cloudrun@v0
+        with:
+          service: history-service
+          region: ${{ env.REGION }}
+          # NOTE: If using a pre-built image, update the image name here
+          image: ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/history:${{ github.sha }}
+          flags: '--port=8003'
+      
+      - name: Deploy Frontend to Cloud Run
+        id: deploy-frontend
+        uses: google-github-actions/deploy-cloudrun@v0
+        with:
+          service: frontend
+          region: ${{ env.REGION }}
+          # NOTE: If using a pre-built image, update the image name here
+          image: ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/frontend:${{ github.sha }}
+          flags: '--port=3000'
 
       # If required, use the Cloud Run url output in later steps
       - name: Show Output
