@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import {
 	Box,
 	Button,
@@ -28,6 +28,7 @@ function HomePage({ socket }) {
 	const [loadingComment, setLoadingComment] = useState("");
 	const [timer, setTimer] = useState(-1);
 	const [questionHistory, setQuestionHistory] = useState([]);
+	const [isRunning, setRunning] = useState(false);
 
 	const indexOfLastPost = currentPage * 3
 	const indexOfFirstPost = indexOfLastPost - 3
@@ -82,6 +83,7 @@ function HomePage({ socket }) {
 
 	const handleClick = () => {
 		setIsLoading(true);
+		setRunning(true)
 		setLoadingComment("Finding match...");
 
 		// Socket connections are disconnected on page refresh and that is the expected behavior across browsers.
@@ -94,12 +96,19 @@ function HomePage({ socket }) {
 	}
 
 	useEffect(() => {
-		if (timer > 0) {
-			setTimeout(() => setTimer(timer - 1), 1000)
+		let interval;
+		if (timer > 0 && setRunning) {
+			console.log(timer)
+			interval = setInterval(() => setTimer(timer - 1), 1000)
 			setLoadingComment("Finding match... (" + timer + "s)")
-		} else if (timer === 0) {
+		} 
+		if (timer === 0) {
 			handleNoMatch();
 		}
+		if (!isRunning) {
+			clearInterval(interval)
+		}
+		return () => clearInterval(interval)
 	}, [timer])
 
 	const handleMatch = (roommates) => {
@@ -131,6 +140,7 @@ function HomePage({ socket }) {
 
 	const handleNoMatch = () => {
 		socket.emit("disconnect-match")
+		setRunning(false)
 		setIsLoading(false);
 		setLoadingComment("");
 	}
