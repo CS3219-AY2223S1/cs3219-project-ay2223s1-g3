@@ -46,13 +46,14 @@ describe('history-service', () => {
 
   it('should get questions done from a user', (done) => {
     const username = 'dumdum';
+    console.log("key", process.env.JWT_KEY)
     const token = jwt.sign({ id: username }, process.env.JWT_KEY);
 
     chai
       .request(app)
       .post('/api/history/getQuestionsDone')
       .set('content-type', 'application/json')
-      .set('Cookie', token)
+      .set('authorization', token)
       .send({
         username: username,
       })
@@ -83,7 +84,7 @@ describe('history-service', () => {
       .request(app)
       .post('/api/history/addQuestionDone')
       .set('content-type', 'application/json')
-      .set('Cookie', token)
+      .set('authorization', token)
       .send({
         username: username,
         questionDone: hardqn1,
@@ -95,7 +96,7 @@ describe('history-service', () => {
           .request(app)
           .post('/api/history/getQuestionsDone')
           .set('content-type', 'application/json')
-          .set('Cookie', token)
+          .set('authorization', token)
           .send({
             username: username,
           })
@@ -115,7 +116,7 @@ describe('history-service', () => {
       .request(app)
       .post('/api/history/addQuestionDone')
       .set('content-type', 'application/json')
-      .set('Cookie', token)
+      .set('authorization', token)
       .send({
         username: username,
         questionDone: hardqn2,
@@ -127,7 +128,7 @@ describe('history-service', () => {
           .request(app)
           .post('/api/history/getQuestionsDone')
           .set('content-type', 'application/json')
-          .set('Cookie', token)
+          .set('authorization', token)
           .send({
             username: username,
           })
