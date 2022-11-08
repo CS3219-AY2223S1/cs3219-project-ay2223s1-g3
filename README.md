@@ -18,7 +18,7 @@ Alternatively, if you are testing the application alone. Open up another interne
 
 ![image](https://user-images.githubusercontent.com/45963294/200629359-e675ade7-6cc4-44bd-885d-ddc2f619437f.png)
 
-![image](https://user-images.githubusercontent.com/45963294/200629484-7aef28d4-a8e2-4dc1-8712-664b5c12c339.png)
+![image](https://user-images.githubusercontent.com/45963294/200629880-42a7dac2-b689-40da-a7ee-9ef95236da3e.png)
 
 ## Other Services
 1. Install npm packages using `npm install`.
