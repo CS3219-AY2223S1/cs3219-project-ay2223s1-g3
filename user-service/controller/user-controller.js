@@ -1,7 +1,6 @@
 import { ormCreateUser as _createUser } from '../model/user-orm.js'
 import { ormLoginUser as _loginUser } from '../model/user-orm.js'
 import { ormLogoutUser as _logoutUser } from '../model/user-orm.js'
-import { ormDeleteUser as _deleteUser } from '../model/user-orm.js'
 import { ormPwChange as _pwChange } from '../model/user-orm.js'
 
 export async function createUser(req, res) {
@@ -42,8 +41,7 @@ export async function loginUser(req, res) {
                 return res.status(400).json({ message: `Unable to retrieve user: ${username}` })
             }
             console.log(`User ${username} logged in successfully!`)
-            req.session.token = resp
-            return res.status(201).json({ message: 'Login successful!', token: req.session.token })
+            return res.status(201).json({ message: 'Login successful!', token: resp })
         } else {
             return res.status(400).json({ message: 'Username and/or Password are missing!' });
         }
@@ -54,18 +52,9 @@ export async function loginUser(req, res) {
 }
 
 export async function logoutUser(req, res) {
-    console.log(req.session)
     try {
-        const reqData = JSON.stringify({
-            headers: req.headers,
-        });
-        console.log('Header: ' + reqData)
         const { username } = req.body
-        console.log("token", req.headers["authorization"])
-        console.log("username", req.body)
-        console.log("username", req.body.username)
         if (username) {
-            console.log("token", req.headers["authorization"])
             const resp = await _logoutUser(username, req.headers["authorization"])
             if (!resp) {
                 console.log('User does not exist!')
@@ -86,35 +75,11 @@ export async function logoutUser(req, res) {
     }
 }
 
-export async function deleteUser(req, res) {
-    try {
-        const { username, password } = req.body
-        if (username && password) {
-            const resp = await _deleteUser(username, password, req.session.token)
-            if (!resp) {
-                console.log('Unable to delete account. Please check your password!')
-                return res.status(400).json({ message: 'Unable to delete account. Please check your password!' })
-            }
-            if (resp.err) {
-                console.log(`Unable to retrieve user: ${username}`)
-                return res.status(400).json({ message: `Unable to retrieve user: ${username}` })
-            }
-            console.log(`Deleted account with username: ${username} successfully!`)
-            return res.status(201).json({ message: `Deleted account with username: ${username} successfully!` })
-        } else {
-            return res.status(400).json({ message: 'Username and/or Password are missing!' });
-        }
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({ message: 'Error occurred when deleting account!' })
-    }
-}
-
 export async function pwChange(req, res) {
     try {
         const { username, oldPw, newPw } = req.body
         if (username && oldPw && newPw) {
-            const resp = await _pwChange(username, oldPw, newPw, req.session.token)
+            const resp = await _pwChange(username, oldPw, newPw, req.headers["authorization"])
             if (!resp) {
                 console.log('Unable to change your password. Please check your old password!')
                 return res.status(400).json({ message: 'Unable to change your password. Please check your old password!' })

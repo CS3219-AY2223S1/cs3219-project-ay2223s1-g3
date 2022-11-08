@@ -1,4 +1,4 @@
-import { createUser, usernameInDb, getUser, deleteUser } from './repository.js';
+import { createUser, usernameInDb, getUser} from './repository.js';
 import { addToBlacklist } from './token-blacklist.js'
 import { signToken, verifyToken } from '../middleware/authentication.js'
 import bcrypt from 'bcryptjs'
@@ -62,37 +62,6 @@ export async function ormLogoutUser(username, jwt) {
         return true
     } catch (err) {
         console.log(`ERROR: Could not retrieve user: ${username}`)
-        return { err }
-    }
-}
-
-export async function ormDeleteUser(username, password, jwt) {
-    try {
-        const exists = await usernameInDb(username)
-        if (!exists) {
-            return false
-        }
-        const user = await getUser(username)
-        const pwValidity = bcrypt.compareSync(password, user.password)
-        if (!pwValidity) {
-            return false
-        }
-        // authentication
-        const verification = await verifyToken(username, jwt)
-        if (!verification || verification.err) {
-            console.log(`ERROR: Verification failed for user: ${username}`)
-            return false
-        }
-        // blacklisting
-        const exp = verification.exp
-        if (!await addToBlacklist(jwt, exp)) {
-            console.log(`ERROR: Unable to add user: ${username}'s JWT to redis database`)
-            return false
-        }
-        const success = await deleteUser(username)
-        return success
-    } catch (err) {
-        console.log(`ERROR: Could not delete user: ${username}`)
         return { err }
     }
 }
