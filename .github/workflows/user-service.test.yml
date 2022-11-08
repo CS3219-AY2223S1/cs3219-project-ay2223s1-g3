@@ -16,6 +16,7 @@ env:
   REDIS_CLOUD_IP: ${{secrets.REDIS_CLOUD_IP}}
   REDIS_CLOUD_PORT: ${{secrets.REDIS_CLOUD_PORT}}
   REDIS_CLOUD_PW: ${{secrets.REDIS_CLOUD_PW}}
+  COOKIE_SECRET: ${{secret.COOKIE_SECRET}}
 on:
   push:
     branches: [backend-unittest]
