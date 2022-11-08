@@ -52,6 +52,13 @@ env:
   PROJECT_ID: cs3219-project-g3
   GAR_LOCATION: asia.gcr.io
   REGION: asia-southeast1
+  ENV: PROD
+  DB_CLOUD_URI: ${{secrets.DB_CLOUD_URI}}
+  REDIS_CLOUD_IP: ${{secrets.REDIS_CLOUD_IP}}
+  REDIS_CLOUD_PORT: ${{secrets.REDIS_CLOUD_PORT}}
+  REDIS_CLOUD_PW: ${{secrets.REDIS_CLOUD_PW}}
+  COOKIE_SECRET: ${{secrets.COOKIE_SECRET}}
+  JWT_KEY: ${{secrets.JWT_KEY}}
 
 jobs:
   deploy:
