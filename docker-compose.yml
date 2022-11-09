@@ -1,0 +1,34 @@
+version: "3"
+services:
+  users:
+    image: users
+    build: users
+    restart: unless-stopped
+    env_file:
+      - ./user-service/.env
+    ports:
+      - 8000:8000
+  matching:
+    image: matching
+    build: matching
+    restart: unless-stopped
+    env_file:
+      - ./matching-service/.env
+    ports:
+      - 8001:8001
+  questions:
+    image: questions
+    build: questions
+    restart: unless-stopped
+    env_file:
+      - ./question-service/.env
+    ports:
+      - 8002:8002
+  history:
+    image: history
+    build: history
+    restart: unless-stopped
+    env_file:
+      - ./history-service/.env
+    ports:
+      - 8003:8003
