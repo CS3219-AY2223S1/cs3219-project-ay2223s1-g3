@@ -28,13 +28,14 @@ const theme = createTheme({
     },
 });
 
+//const socket = socketIO.connect("http://localhost:8001")
+const socket = socketIO.connect("https://matching-service-xkpqea35pq-as.a.run.app")
+socket.on('connection', () => {
+})
+
 function App() {
     const [isLoggedInToken, setIsLoggedInToken] = useState(null);
-    const socket = socketIO.connect("https://matching-service-xkpqea35pq-as.a.run.app", {
-        query: {isLoggedInToken}
-    })
-    socket.on('connection', () => {
-    })
+
     const ProtectedRoute = ({ children }) => {
         if (!isLoggedInToken && !window.localStorage.getItem("jwt_token")) {
             return <Navigate to="/" />;
