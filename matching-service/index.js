@@ -28,19 +28,7 @@ httpServer.listen(8001, () => {
   console.log("listening on *:8001");
 });
 
-io.use(function(socket, next){
-  if (socket.handshake.query && socket.handshake.query.isLoggedInToken){
-    jwt.verify(socket.handshake.query.isLoggedInToken, process.env.JWT_KEY, function(err, decoded) {
-      if (err) return next(new Error('Authentication error'));
-      socket.decoded = decoded;
-      next();
-    });
-  }
-  else {
-    next(new Error('Authentication error'));
-  }    
-})
-.on("connection", (socket) => {
+io.on("connection", (socket) => {
   console.log("a user connected: " + socket.id);
   createListeners(socket, io);
 });
