@@ -66,7 +66,7 @@ export async function ormLogoutUser(username, jwt) {
     }
 }
 
-export async function ormPwChange(username, oldPw, newPw, jwt) {
+export async function ormPwChange(username, oldPw, newPw) {
     try {
         const exists = await usernameInDb(username)
         if (!exists) {
@@ -75,12 +75,6 @@ export async function ormPwChange(username, oldPw, newPw, jwt) {
         const user = await getUser(username)
         const pwValidity = bcrypt.compareSync(oldPw, user.password)
         if (!pwValidity) {
-            return false
-        }
-        // authentication
-        const verification = await verifyToken(username, jwt)
-        if (!verification || verification.err) {
-            console.log(`ERROR: Verification failed for user: ${username}`)
             return false
         }
         user.password = bcrypt.hashSync(newPw)

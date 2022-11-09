@@ -79,7 +79,7 @@ export async function pwChange(req, res) {
     try {
         const { username, oldPw, newPw } = req.body
         if (username && oldPw && newPw) {
-            const resp = await _pwChange(username, oldPw, newPw, req.headers["authorization"])
+            const resp = await _pwChange(username, oldPw, newPw)
             if (!resp) {
                 console.log('Unable to change your password. Please check your old password!')
                 return res.status(400).json({ message: 'Unable to change your password. Please check your old password!' })
