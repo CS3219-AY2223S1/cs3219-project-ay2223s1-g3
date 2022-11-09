@@ -60,7 +60,7 @@ function SignupPage() {
 
     const handleResetPassword = async () => {
         setIsSignupSuccess(false)
-        const res = await axios.post(URL_USER_SVC + "/pwChange", { username: username, oldPw: password, newPw: confirmPassword })
+        const res = await axios.post(URL_USER_SVC + "/pwChange", { username: username, oldPw: confirmPassword, newPw: password })
             .catch((err) => {
                 if (err.response.status === STATUS_CODE_CONFLICT) {
                     setErrorDialog(err.response.data.message)
@@ -117,7 +117,7 @@ function SignupPage() {
                     <Typography fontSize={12} ><b>• At least one letter and one number</b></Typography>
                     <Typography fontSize={12} marginBottom={"1rem"}><b>• At least one special character</b></Typography>
                     <TextField
-                        label="Confirm Password"
+                        label={location.state === "signup" ? "Confirm password" : "Old password"}
                         variant="standard"
                         type="password"
                         value={confirmPassword}
